@@ -1,0 +1,19 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/auth/error/page": "/auth/error",
+  "/auth/login/page": "/auth/login",
+  "/auth/sign-up-success/page": "/auth/sign-up-success",
+  "/auth/sign-up/page": "/auth/sign-up",
+  "/dashboard/admin/page": "/dashboard/admin",
+  "/dashboard/badges/page": "/dashboard/badges",
+  "/dashboard/leaderboard/page": "/dashboard/leaderboard",
+  "/dashboard/my-tasks/page": "/dashboard/my-tasks",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/rewards/page": "/dashboard/rewards",
+  "/dashboard/tasks/[id]/page": "/dashboard/tasks/[id]",
+  "/dashboard/verify/[id]/page": "/dashboard/verify/[id]",
+  "/dashboard/verify/page": "/dashboard/verify",
+  "/dashboard/wallet/page": "/dashboard/wallet",
+  "/page": "/"
+}

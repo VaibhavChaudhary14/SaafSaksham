@@ -1,0 +1,19 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/auth/error/page": "app/auth/error/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/auth/sign-up-success/page": "app/auth/sign-up-success/page.js",
+  "/auth/sign-up/page": "app/auth/sign-up/page.js",
+  "/dashboard/admin/page": "app/dashboard/admin/page.js",
+  "/dashboard/badges/page": "app/dashboard/badges/page.js",
+  "/dashboard/leaderboard/page": "app/dashboard/leaderboard/page.js",
+  "/dashboard/my-tasks/page": "app/dashboard/my-tasks/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/rewards/page": "app/dashboard/rewards/page.js",
+  "/dashboard/tasks/[id]/page": "app/dashboard/tasks/[id]/page.js",
+  "/dashboard/verify/[id]/page": "app/dashboard/verify/[id]/page.js",
+  "/dashboard/verify/page": "app/dashboard/verify/page.js",
+  "/dashboard/wallet/page": "app/dashboard/wallet/page.js",
+  "/page": "app/page.js"
+}
