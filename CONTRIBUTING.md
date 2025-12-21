@@ -20,50 +20,58 @@ You can help SaafSaksham in many ways:
 
 ## Getting Started
 
-1. Fork the repository
-2. Clone your fork locally
-3. Create a new branch
-git checkout -b feature/your-feature-name
+1. Fork the repository  
+2. Clone your fork locally  
+3. Create a new branch  
 
-4. Make your changes
-5. Commit with a clear message
-git commit -m "Add: geo-locked task verification"
+Example:  
+git checkout -b feature/your-feature-name  
 
-6. Push and open a Pull Request
+4. Make your changes  
+5. Commit with a clear message  
 
-Pull Request Guidelines
-Keep PRs focused and small
+Example:  
+git commit -m "Add: geo-locked task verification"  
 
-Follow existing code style
+6. Push your branch and open a Pull Request  
 
-Add comments where logic is complex
+---
 
-Ensure builds/tests pass
+## Pull Request Guidelines
 
-Clearly describe what and why
+- Keep PRs focused and small  
+- Follow existing code style  
+- Add comments where logic is complex  
+- Ensure builds and tests pass  
+- Clearly describe what you changed and why  
 
-Development Standards
-Clean, readable code > clever hacks
+---
 
-Security & privacy first
+## Development Standards
 
-AI decisions should be explainable
+- Clean, readable code > clever hacks  
+- Security and privacy first  
+- AI decisions should be explainable  
+- Civic impact must remain verifiable  
 
-Civic impact must remain verifiable
+---
 
-Reporting Issues
+## Reporting Issues
+
 When reporting bugs, please include:
 
-Expected behavior
+- Expected behavior  
+- Actual behavior  
+- Screenshots or logs (if available)  
+- Steps to reproduce  
 
-Actual behavior
+---
 
-Screenshots/logs if available
+## Code of Conduct
 
-Steps to reproduce
-
-Code of Conduct
-All contributors must follow our Code of Conduct.
+All contributors must follow our **Code of Conduct**.  
 Respect, inclusion, and collaboration are non-negotiable.
+
+---
 
 Thank you for helping build cleaner, smarter cities 🌍
