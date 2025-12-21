@@ -1,0 +1,3 @@
+{
+  "/oauth/consent/deny/route": "app/oauth/consent/deny/route.js"
+}

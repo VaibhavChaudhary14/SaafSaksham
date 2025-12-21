@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///workspaces/SaafSaksham/app/oauth/consent/deny/route.ts"],"sourcesContent":["import { NextResponse } from \"next/server\"\n\nexport async function GET(req: Request) {\n  const url = new URL(req.url)\n  const redirect_uri = url.searchParams.get(\"redirect_uri\")\n  const state = url.searchParams.get(\"state\")\n\n  if (!redirect_uri) {\n    return NextResponse.json({ error: \"missing redirect_uri\" }, { status: 400 })\n  }\n\n  const dest = new URL(redirect_uri)\n  dest.searchParams.set(\"error\", \"access_denied\")\n  if (state) dest.searchParams.set(\"state\", state)\n\n  return NextResponse.redirect(dest.toString())\n}\n"],"names":[],"mappings":";;;;AAAA;;AAEO,eAAe,IAAI,GAAY;IACpC,MAAM,MAAM,IAAI,IAAI,IAAI,GAAG;IAC3B,MAAM,eAAe,IAAI,YAAY,CAAC,GAAG,CAAC;IAC1C,MAAM,QAAQ,IAAI,YAAY,CAAC,GAAG,CAAC;IAEnC,IAAI,CAAC,cAAc;QACjB,OAAO,gRAAY,CAAC,IAAI,CAAC;YAAE,OAAO;QAAuB,GAAG;YAAE,QAAQ;QAAI;IAC5E;IAEA,MAAM,OAAO,IAAI,IAAI;IACrB,KAAK,YAAY,CAAC,GAAG,CAAC,SAAS;IAC/B,IAAI,OAAO,KAAK,YAAY,CAAC,GAAG,CAAC,SAAS;IAE1C,OAAO,gRAAY,CAAC,QAAQ,CAAC,KAAK,QAAQ;AAC5C"}}]
+}
