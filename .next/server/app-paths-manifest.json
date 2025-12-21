@@ -1,6 +1,10 @@
 {
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/generate-qr/route": "app/api/generate-qr/route.js",
+  "/api/upload/route": "app/api/upload/route.js",
+  "/api/verify-ai/route": "app/api/verify-ai/route.js",
+  "/api/webhooks/route": "app/api/webhooks/route.js",
   "/auth/error/page": "app/auth/error/page.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/auth/sign-up-success/page": "app/auth/sign-up-success/page.js",
@@ -15,5 +19,7 @@
   "/dashboard/verify/[id]/page": "app/dashboard/verify/[id]/page.js",
   "/dashboard/verify/page": "app/dashboard/verify/page.js",
   "/dashboard/wallet/page": "app/dashboard/wallet/page.js",
+  "/merchant/page": "app/merchant/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
   "/page": "app/page.js"
 }

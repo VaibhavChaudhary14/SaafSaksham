@@ -57,6 +57,30 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/api/generate-qr",
+      "regex": "^/api/generate\\-qr(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/generate\\-qr(?:/)?$"
+    },
+    {
+      "page": "/api/upload",
+      "regex": "^/api/upload(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/upload(?:/)?$"
+    },
+    {
+      "page": "/api/verify-ai",
+      "regex": "^/api/verify\\-ai(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/verify\\-ai(?:/)?$"
+    },
+    {
+      "page": "/api/webhooks",
+      "regex": "^/api/webhooks(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/webhooks(?:/)?$"
+    },
+    {
       "page": "/auth/error",
       "regex": "^/auth/error(?:/)?$",
       "routeKeys": {},
@@ -127,6 +151,18 @@
       "regex": "^/dashboard/wallet(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/dashboard/wallet(?:/)?$"
+    },
+    {
+      "page": "/merchant",
+      "regex": "^/merchant(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/merchant(?:/)?$"
+    },
+    {
+      "page": "/onboarding",
+      "regex": "^/onboarding(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/onboarding(?:/)?$"
     }
   ],
   "dataRoutes": [],

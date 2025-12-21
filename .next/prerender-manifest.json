@@ -127,6 +127,56 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/merchant": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/merchant",
+      "dataRoute": "/merchant.rsc",
+      "prefetchDataRoute": null,
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/onboarding": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/onboarding",
+      "dataRoute": "/onboarding.rsc",
+      "prefetchDataRoute": null,
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -156,8 +206,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "d5417b88d2a7fed4fd6d67f77eda56df",
-    "previewModeSigningKey": "17091c27ab21bc773b33c522019cc38b9412630eee4f681b2d849922577c7f44",
-    "previewModeEncryptionKey": "2e468b36a66169f5999d44317dc08fe026c78cd45ce613b44c2edbc285f7aa53"
+    "previewModeId": "71698da3cc0e81e8acc60ffda3992c68",
+    "previewModeSigningKey": "ec58ed6c5f64b22724726def235e12883e4b39ea0fc9aa5eb40a6f26dadda930",
+    "previewModeEncryptionKey": "689aea9752788e0b6ec537302dfd9ae1cbaf0ff645854283c8ce51648f41616f"
   }
 }
