@@ -1,5 +1,10 @@
 "use client"
 
+// This page intentionally reads client-side search params (useSearchParams)
+// and should not be prerendered. Mark as force-dynamic so Next skips
+// static prerendering during the build.
+export const dynamic = "force-dynamic"
+
 import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
