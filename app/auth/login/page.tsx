@@ -4,6 +4,7 @@ import type React from "react"
 
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -81,6 +82,40 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full bg-primary hover:bg-primary-hover" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
+                <div className="mt-3">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={async () => {
+                      const supabase = createClient()
+                      await supabase.auth.signInWithOAuth({ provider: 'google' })
+                    }}
+                  >
+                    Sign in with Google
+                  </Button>
+                </div>
+
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="mt-2">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const params = new URLSearchParams({
+                          client_id: 'dev-google-client',
+                          redirect_uri: process.env.NEXT_PUBLIC_SUPABASE_URL + '/auth/v1/callback',
+                          redirect_to: 'http://localhost:3000',
+                          response_type: 'code',
+                          scope: 'email profile',
+                          state: Math.random().toString(36).slice(2),
+                        })
+                        window.location.href = '/oauth/consent?' + params.toString()
+                      }}
+                    >
+                      Dev: Sign in with Google (Local Consent)
+                    </Button>
+                  </div>
+                )}
               </div>
               <div className="mt-4 text-center text-sm">
                 Don't have an account?{" "}

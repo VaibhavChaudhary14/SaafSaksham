@@ -127,6 +127,18 @@ export default function SignUpPage() {
                 <Button type="submit" className="w-full bg-primary hover:bg-primary-hover" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
+                <div className="mt-3">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={async () => {
+                      const supabase = createClient()
+                      await supabase.auth.signInWithOAuth({ provider: 'google' })
+                    }}
+                  >
+                    Continue with Google
+                  </Button>
+                </div>
               </div>
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
