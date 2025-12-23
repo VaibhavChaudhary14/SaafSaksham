@@ -1,6 +1,7 @@
 "use client"
 
-import type { Profile } from "@/lib/types/database"
+import React from "react"
+import type { Profile, Badge as BadgeType, UserBadge } from "@/lib/types/database"
 import DashboardLayout from "@/components/dashboard/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,29 +9,9 @@ import { Progress } from "@/components/ui/progress"
 import { Award, Lock, CheckCircle2, Star, Trophy, Sparkles, Crown } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-interface BadgeData {
-  id: string
-  name: string
-  description: string
-  icon: string
-  category: string
-  rarity: string
-  required_count: number
-  reward_tokens: number
-  reward_xp: number
-}
-
-interface UserBadge {
-  id: string
-  user_id: string
-  badge_id: string
-  earned_at: string
-  badges?: BadgeData
-}
-
 interface BadgesViewProps {
   profile: Profile
-  allBadges: BadgeData[]
+  allBadges: BadgeType[]
   userBadges: UserBadge[]
 }
 
@@ -67,8 +48,38 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
     }
   }
 
+  // Helper to extract required count from JSONB criteria
+  const getRequiredCount = (badge: BadgeType): number => {
+    if (!badge.criteria) return 0
+    // Check for common criteria keys
+    if (typeof badge.criteria.tasks_completed === "number") return badge.criteria.tasks_completed
+    if (typeof badge.criteria.current_streak === "number") return badge.criteria.current_streak
+    // Fallback or other criteria
+    return 100 // Default denominator to avoid division by zero
+  }
+
+  const getProgressValue = (badge: BadgeType) => {
+    const required = getRequiredCount(badge)
+    if (required === 0) return 0
+
+    if (badge.category === "streak" || badge.criteria.current_streak) {
+      return Math.min((profile.current_streak / required) * 100, 100)
+    }
+    // Default to task completion for "milestone" or others
+    return Math.min((profile.tasks_completed / required) * 100, 100)
+  }
+
+  const getProgressLabel = (badge: BadgeType) => {
+    const required = getRequiredCount(badge)
+    if (badge.category === "streak" || badge.criteria.current_streak) {
+      return `${required} day streak`
+    }
+    return `${required} tasks`
+  }
+
   const getCategoryProgress = (category: string) => {
     const categoryBadges = allBadges.filter((b) => b.category === category)
+    if (categoryBadges.length === 0) return 0
     const earnedCount = categoryBadges.filter((b) => earnedBadgeIds.has(b.id)).length
     return (earnedCount / categoryBadges.length) * 100
   }
@@ -95,7 +106,7 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
               <div className="text-2xl font-bold">
                 {earnedBadges.length}/{allBadges.length}
               </div>
-              <Progress value={(earnedBadges.length / allBadges.length) * 100} className="mt-2" />
+              <Progress value={allBadges.length > 0 ? (earnedBadges.length / allBadges.length) * 100 : 0} className="mt-2" />
             </CardContent>
           </Card>
           <Card>
@@ -105,7 +116,7 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{profile.tasks_completed}</div>
-              <Progress value={getCategoryProgress("task_completion")} className="mt-2" />
+              <Progress value={getCategoryProgress("milestone")} className="mt-2" />
             </CardContent>
           </Card>
           <Card>
@@ -159,7 +170,7 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
                           className={`flex h-20 w-20 items-center justify-center rounded-full ${isEarned ? getRarityColor(badge.rarity) : "bg-muted"}`}
                         >
                           {isEarned ? (
-                            <span className="text-4xl">{badge.icon}</span>
+                            <span className="text-4xl">{badge.icon_url || "🏆"}</span>
                           ) : (
                             <Lock className="h-8 w-8 text-muted-foreground" />
                           )}
@@ -181,21 +192,10 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
                       {!isEarned && (
                         <div className="rounded-lg bg-muted p-3 text-center">
                           <p className="text-xs text-muted-foreground">
-                            Complete {badge.required_count}{" "}
-                            {badge.category === "task_completion"
-                              ? "tasks"
-                              : badge.category === "streak"
-                                ? "day streak"
-                                : "actions"}
+                            Complete {getProgressLabel(badge)}
                           </p>
                           <Progress
-                            value={
-                              badge.category === "task_completion"
-                                ? (profile.tasks_completed / badge.required_count) * 100
-                                : badge.category === "streak"
-                                  ? (profile.current_streak / badge.required_count) * 100
-                                  : 0
-                            }
+                            value={getProgressValue(badge)}
                             className="mt-2"
                           />
                         </div>
@@ -232,7 +232,7 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
                         <div
                           className={`flex h-20 w-20 items-center justify-center rounded-full ${getRarityColor(badge.rarity)}`}
                         >
-                          <span className="text-4xl">{badge.icon}</span>
+                          <span className="text-4xl">{badge.icon_url || "🏆"}</span>
                         </div>
                       </div>
                       <CardTitle className="text-center text-xl">{badge.name}</CardTitle>
@@ -275,21 +275,10 @@ export default function BadgesView({ profile, allBadges, userBadges }: BadgesVie
                     <p className="text-center text-sm text-muted-foreground">{badge.description}</p>
                     <div className="rounded-lg bg-muted p-3 text-center">
                       <p className="text-xs text-muted-foreground">
-                        Complete {badge.required_count}{" "}
-                        {badge.category === "task_completion"
-                          ? "tasks"
-                          : badge.category === "streak"
-                            ? "day streak"
-                            : "actions"}
+                        Complete {getProgressLabel(badge)}
                       </p>
                       <Progress
-                        value={
-                          badge.category === "task_completion"
-                            ? (profile.tasks_completed / badge.required_count) * 100
-                            : badge.category === "streak"
-                              ? (profile.current_streak / badge.required_count) * 100
-                              : 0
-                        }
+                        value={getProgressValue(badge)}
                         className="mt-2"
                       />
                     </div>

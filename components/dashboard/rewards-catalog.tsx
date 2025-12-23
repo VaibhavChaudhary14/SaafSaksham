@@ -35,165 +35,75 @@ interface RewardsCatalogProps {
   partners: CSRPartner[]
 }
 
-const SAMPLE_REWARDS = [
-  {
-    id: "voucher-100",
-    type: "voucher",
-    title: "100 Rupee Voucher",
-    description: "Redeemable at partner stores",
-    tokens: 500,
-    icon: <ShoppingBag className="h-8 w-8" />,
-    badge: "Popular",
-  },
-  {
-    id: "voucher-250",
-    type: "voucher",
-    title: "250 Rupee Voucher",
-    description: "Redeemable at partner stores",
-    tokens: 1200,
-    icon: <ShoppingBag className="h-8 w-8" />,
-  },
-  {
-    id: "voucher-500",
-    type: "voucher",
-    title: "500 Rupee Voucher",
-    description: "Redeemable at partner stores",
-    tokens: 2300,
-    icon: <ShoppingBag className="h-8 w-8" />,
-    badge: "Best Value",
-  },
-  {
-    id: "merchandise-tshirt",
-    type: "merchandise",
-    title: "SaafSaksham T-Shirt",
-    description: "Official branded merchandise",
-    tokens: 800,
-    icon: <Gift className="h-8 w-8" />,
-  },
-  {
-    id: "merchandise-bottle",
-    type: "merchandise",
-    title: "Eco Water Bottle",
-    description: "Reusable stainless steel bottle",
-    tokens: 600,
-    icon: <Gift className="h-8 w-8" />,
-  },
-  {
-    id: "donation-tree",
-    type: "donation",
-    title: "Plant a Tree",
-    description: "Plant a tree in your city",
-    tokens: 300,
-    icon: <Heart className="h-8 w-8" />,
-    badge: "Impact",
-  },
-  {
-    id: "donation-meal",
-    type: "donation",
-    title: "Donate a Meal",
-    description: "Provide a meal to someone in need",
-    tokens: 200,
-    icon: <Heart className="h-8 w-8" />,
-    badge: "Impact",
-  },
-  {
-    id: "cash-500",
-    type: "cash",
-    title: "500 Rupees Cash",
-    description: "Direct bank transfer",
-    tokens: 2500,
-    icon: <DollarSign className="h-8 w-8" />,
-  },
-  {
-    id: "certificate",
-    type: "certificate",
-    title: "Civic Champion Certificate",
-    description: "Official recognition certificate",
-    tokens: 1000,
-    icon: <Award className="h-8 w-8" />,
-  },
-]
+import { rewardsService } from "@/lib/services/rewards-service"
+import type { RedemptionOption } from "@/lib/types/database"
+import { useEffect } from "react"
+// ... imports ...
 
-export default function RewardsCatalog({ profile, partners }: RewardsCatalogProps) {
+export default function RewardsCatalog({ profile }: { profile: Profile }) {
   const router = useRouter()
+  const [rewards, setRewards] = useState<RedemptionOption[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState<string>("all")
-  const [selectedReward, setSelectedReward] = useState<any>(null)
+  const [selectedReward, setSelectedReward] = useState<RedemptionOption | null>(null)
   const [isRedeeming, setIsRedeeming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
 
-  const filteredRewards = SAMPLE_REWARDS.filter((reward) => {
+  useEffect(() => {
+    const fetchRewards = async () => {
+      try {
+        const data = await rewardsService.getRewards()
+        setRewards(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRewards()
+  }, [])
+
+  const filteredRewards = rewards.filter((reward) => {
     const matchesSearch = reward.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesType = typeFilter === "all" || reward.type === typeFilter
+    const matchesType = typeFilter === "all" || reward.category === typeFilter
     return matchesSearch && matchesType
   })
+
+  // Helper to map icon names to components
+  const getIcon = (iconName?: string | null) => {
+    switch (iconName) {
+      case "ShoppingBag": return <ShoppingBag className="h-8 w-8" />
+      case "Gift": return <Gift className="h-8 w-8" />
+      case "Heart": return <Heart className="h-8 w-8" />
+      case "DollarSign": return <DollarSign className="h-8 w-8" />
+      case "Award": return <Award className="h-8 w-8" />
+      default: return <Gift className="h-8 w-8" />
+    }
+  }
 
   const handleRedeem = async () => {
     if (!selectedReward) return
 
-    if (profile.total_tokens < selectedReward.tokens) {
+    if (profile.total_tokens < selectedReward.tokens_required) {
       setError("Insufficient tokens for this reward")
       return
     }
 
     setIsRedeeming(true)
     setError(null)
-    const supabase = createClient()
 
     try {
-      // Deduct tokens
-      const { error: tokenError } = await supabase.from("tokens").insert({
-        user_id: profile.id,
-        amount: -selectedReward.tokens,
-        transaction_type: "redeemed",
-        description: `Redeemed: ${selectedReward.title}`,
-      })
-
-      if (tokenError) throw tokenError
-
-      // Create redemption record
-      const { error: redemptionError } = await supabase.from("redemptions").insert({
-        user_id: profile.id,
-        partner_id: partners[0]?.id || null,
-        tokens_spent: selectedReward.tokens,
-        reward_type: selectedReward.type,
-        reward_details: {
-          title: selectedReward.title,
-          description: selectedReward.description,
-          reward_id: selectedReward.id,
-        },
-        status: "pending",
-      })
-
-      if (redemptionError) throw redemptionError
-
-      // Update profile
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          total_tokens: profile.total_tokens - selectedReward.tokens,
-        })
-        .eq("id", profile.id)
-
-      if (profileError) throw profileError
-
-      // Create notification
-      await supabase.from("notifications").insert({
-        user_id: profile.id,
-        type: "reward_redeemed",
-        title: "Reward Redeemed!",
-        message: `You've redeemed ${selectedReward.title} for ${selectedReward.tokens} tokens.`,
-        link: "/dashboard/wallet",
-      })
+      await rewardsService.redeemReward(profile.id, selectedReward)
 
       setShowSuccess(true)
       setTimeout(() => {
         router.push("/dashboard/wallet")
       }, 2000)
-    } catch (err) {
+    } catch (err: any) {
       console.error("[v0] Error redeeming reward:", err)
-      setError("Failed to redeem reward. Please try again.")
+      setError(err.message || "Failed to redeem reward. Please try again.")
     } finally {
       setIsRedeeming(false)
     }
@@ -264,33 +174,41 @@ export default function RewardsCatalog({ profile, partners }: RewardsCatalogProp
 
         {/* Rewards Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRewards.map((reward) => {
-            const canAfford = profile.total_tokens >= reward.tokens
+          {loading ? (
+            // Skeletons
+            [1, 2, 3].map((i) => (
+              <Card key={i} className="animate-pulse">
+                <CardContent className="h-64"></CardContent>
+              </Card>
+            ))
+          ) : filteredRewards.map((reward) => {
+            const canAfford = profile.total_tokens >= reward.tokens_required
             return (
               <Card
                 key={reward.id}
                 className={`relative transition-all hover:shadow-lg ${!canAfford ? "opacity-60" : ""}`}
               >
-                {reward.badge && (
+                {/* Badge rendering if needed - not in schema yet currently */}
+                {/* {reward.badge && (
                   <Badge className="absolute right-4 top-4 bg-accent" variant="secondary">
                     {reward.badge}
                   </Badge>
-                )}
+                )} */}
                 <CardHeader>
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    {reward.icon}
+                    {getIcon(reward.icon_name)}
                   </div>
                   <CardTitle className="text-xl">{reward.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="mb-4 text-sm text-muted-foreground">{reward.description}</p>
                   <Badge variant="outline" className="mb-4 capitalize">
-                    {reward.type}
+                    {reward.category}
                   </Badge>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <Coins className="h-5 w-5 text-primary" />
-                      <span className="text-xl font-bold text-primary">{reward.tokens.toLocaleString()}</span>
+                      <span className="text-xl font-bold text-primary">{reward.tokens_required.toLocaleString()}</span>
                     </div>
                     <Button
                       onClick={() => setSelectedReward(reward)}

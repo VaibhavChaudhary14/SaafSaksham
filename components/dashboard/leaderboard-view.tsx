@@ -1,6 +1,7 @@
 "use client"
 
-import type { Profile } from "@/lib/types/database"
+import React from "react"
+import type { Profile, LeaderboardEntry } from "@/lib/types/database"
 import { useState } from "react"
 import DashboardLayout from "@/components/dashboard/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,24 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Trophy, Medal, Coins, TrendingUp, Flame, Target, Crown } from "lucide-react"
-
-interface LeaderboardEntry {
-  id: string
-  user_id: string
-  rank: number
-  total_tokens: number
-  total_xp: number
-  tasks_completed: number
-  current_streak: number
-  last_updated: string
-  profiles?: {
-    full_name: string
-    avatar_url: string | null
-    role: string
-    city: string
-    state: string
-  }
-}
 
 interface LeaderboardViewProps {
   profile: Profile
@@ -71,7 +54,7 @@ export default function LeaderboardView({ profile, leaderboardData, userRanking 
       case "streak":
         return b.current_streak - a.current_streak
       default:
-        return a.rank - b.rank
+        return a.global_rank - b.global_rank
     }
   })
 
@@ -89,10 +72,10 @@ export default function LeaderboardView({ profile, leaderboardData, userRanking 
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  {getRankBadge(userRanking.rank)}
+                  {getRankBadge(userRanking.global_rank)}
                   <div>
                     <p className="text-sm text-muted-foreground">Your Rank</p>
-                    <p className="text-2xl font-bold">#{userRanking.rank}</p>
+                    <p className="text-2xl font-bold">#{userRanking.global_rank}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-4">
@@ -168,31 +151,29 @@ export default function LeaderboardView({ profile, leaderboardData, userRanking 
                 const isCurrentUser = entry.user_id === profile.id
                 return (
                   <div
-                    key={entry.id}
-                    className={`flex items-center justify-between rounded-lg p-4 transition-colors ${
-                      isCurrentUser ? "bg-primary/10 border-2 border-primary" : "border hover:bg-muted/50"
-                    }`}
+                    key={entry.user_id}
+                    className={`flex items-center justify-between rounded-lg p-4 transition-colors ${isCurrentUser ? "bg-primary/10 border-2 border-primary" : "border hover:bg-muted/50"
+                      }`}
                   >
                     <div className="flex items-center gap-4">
                       {getRankBadge(actualRank)}
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={entry.profiles?.avatar_url || ""} />
-                        <AvatarFallback>{entry.profiles?.full_name?.charAt(0) || "U"}</AvatarFallback>
+                        <AvatarImage src={entry.avatar_url || ""} />
+                        <AvatarFallback>{entry.display_name?.charAt(0) || "U"}</AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">
-                            {entry.profiles?.full_name || "Unknown User"}
+                            {entry.display_name || "Unknown User"}
                             {isCurrentUser && <Badge variant="secondary">You</Badge>}
                           </p>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <Badge variant="outline" className="capitalize">
-                            {entry.profiles?.role}
-                          </Badge>
-                          <span>
-                            {entry.profiles?.city}, {entry.profiles?.state}
-                          </span>
+                          {entry.city && (
+                            <span>
+                              {entry.city}, {entry.state}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

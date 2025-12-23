@@ -21,13 +21,8 @@ export default async function LeaderboardPage() {
   // Fetch top 50 users from leaderboard
   const { data: leaderboardData } = await supabase
     .from("leaderboard")
-    .select(
-      `
-      *,
-      profiles(full_name, avatar_url, role, city, state)
-    `,
-    )
-    .order("rank", { ascending: true })
+    .select("*")
+    .order("global_rank", { ascending: true })
     .limit(50)
 
   // Find current user's ranking

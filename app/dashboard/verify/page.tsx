@@ -24,7 +24,10 @@ export default async function VerifyPage() {
     .select(
       `
       *,
-      profiles!tasks_claimed_by_fkey(full_name, avatar_url)
+      submitted_by:claimed_by (
+        display_name,
+        avatar_url
+      )
     `,
     )
     .eq("status", "submitted")

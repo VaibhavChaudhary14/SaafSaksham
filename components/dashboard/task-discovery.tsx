@@ -1,8 +1,7 @@
 "use client"
 
-import type { Profile, Task } from "@/lib/types/database"
+import type { Profile, Task, TaskCategory } from "@/lib/types/database"
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,6 +11,7 @@ import TaskMap from "@/components/dashboard/task-map"
 import TaskCard from "@/components/dashboard/task-card"
 import { MapPin, Search, Coins, TrendingUp, Award, Zap, LayoutGrid, MapIcon, SlidersHorizontal } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { taskService, type TaskFilters } from "@/lib/services/task-service"
 
 interface TaskDiscoveryProps {
   profile: Profile
@@ -19,8 +19,7 @@ interface TaskDiscoveryProps {
 
 export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
   const [tasks, setTasks] = useState<Task[]>([])
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [severityFilter, setSeverityFilter] = useState<string>("all")
@@ -28,38 +27,38 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [showFilters, setShowFilters] = useState(false)
 
+  // Real database fetch
   useEffect(() => {
-    fetchTasks()
-  }, [])
+    const fetchTasks = async () => {
+      setLoading(true)
+      try {
+        const filters: TaskFilters = {
+          status: "open"
+        }
 
-  useEffect(() => {
-    filterAndSortTasks()
-  }, [tasks, searchQuery, categoryFilter, severityFilter, sortBy])
+        if (categoryFilter !== "all") {
+          filters.category = [categoryFilter as TaskCategory]
+        }
+        // Add severity filter to TaskService if needed, or filter client side
+        // For now, let's filter client side for severity and sort
 
-  const fetchTasks = async () => {
-    const supabase = createClient()
-    setIsLoading(true)
-
-    try {
-      const { data, error } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("status", "open")
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setTasks(data || [])
-    } catch (error) {
-      console.error("[v0] Error fetching tasks:", error)
-    } finally {
-      setIsLoading(false)
+        const fetchedTasks = await taskService.getTasks(filters)
+        setTasks(fetchedTasks)
+      } catch (error) {
+        console.error("Failed to load tasks", error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-  const filterAndSortTasks = () => {
+    fetchTasks()
+  }, [categoryFilter])
+
+  // Client-side filtering and sorting
+  const getFilteredAndSortedTasks = () => {
     let result = [...tasks]
 
-    // Apply search
+    // Search
     if (searchQuery) {
       result = result.filter(
         (task) =>
@@ -69,17 +68,12 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
       )
     }
 
-    // Apply category filter
-    if (categoryFilter !== "all") {
-      result = result.filter((task) => task.category === categoryFilter)
-    }
-
-    // Apply severity filter
+    // Severity
     if (severityFilter !== "all") {
       result = result.filter((task) => task.severity === severityFilter)
     }
 
-    // Apply sorting
+    // Sorting
     switch (sortBy) {
       case "reward_high":
         result.sort((a, b) => b.token_reward - a.token_reward)
@@ -92,36 +86,32 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
         break
       case "severity":
         const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 }
+        // @ts-ignore
         result.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity])
         break
     }
 
-    setFilteredTasks(result)
+    return result
   }
+
+  const filteredTasks = getFilteredAndSortedTasks()
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "garbage":
-        return "🗑️"
-      case "pothole":
-        return "🕳️"
-      case "graffiti":
-        return "🎨"
-      case "drainage":
-        return "💧"
-      case "streetlight":
-        return "💡"
-      case "illegal_dump":
-        return "⚠️"
-      default:
-        return "📍"
+      case "garbage": return "🗑️"
+      case "pothole": return "🕳️"
+      case "graffiti": return "🎨"
+      case "drainage": return "💧"
+      case "streetlight": return "💡"
+      case "illegal_dump": return "⚠️"
+      default: return "📍"
     }
   }
 
   return (
     <DashboardLayout profile={profile}>
       <div className="space-y-6">
-        {/* Header Stats */}
+        {/* Header Stats - Keeping these static or connected to profile for now */}
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardContent className="p-6">
@@ -272,9 +262,9 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
             </h2>
           </div>
 
-          {isLoading ? (
+          {loading ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {[1, 2, 3].map((i) => (
                 <Card key={i} className="animate-pulse">
                   <CardContent className="p-6">
                     <div className="h-40 rounded-lg bg-muted"></div>
@@ -284,10 +274,11 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
             </div>
           ) : viewMode === "grid" ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredTasks.map((task) => (
-                <TaskCard key={task.id} task={task} getCategoryIcon={getCategoryIcon} />
-              ))}
-              {filteredTasks.length === 0 && (
+              {filteredTasks.length > 0 ? (
+                filteredTasks.map((task) => (
+                  <TaskCard key={task.id} task={task} />
+                ))
+              ) : (
                 <div className="col-span-full py-12 text-center">
                   <MapPin className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                   <h3 className="mb-2 text-lg font-semibold">No tasks found</h3>

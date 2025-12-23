@@ -1,6 +1,6 @@
 "use client"
 
-import type { Profile } from "@/lib/types/database"
+import type { Profile, TokenTransaction, Redemption } from "@/lib/types/database"
 import { useState } from "react"
 import DashboardLayout from "@/components/dashboard/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,29 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Coins, TrendingUp, ArrowUpRight, ArrowDownLeft, Gift, Calendar, ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
-
-interface TokenTransaction {
-  id: string
-  user_id: string
-  task_id: string | null
-  amount: number
-  transaction_type: "earned" | "redeemed" | "bonus"
-  description: string
-  created_at: string
-}
-
-interface Redemption {
-  id: string
-  user_id: string
-  partner_id: string
-  tokens_spent: number
-  reward_type: string
-  reward_details: any
-  status: string
-  created_at: string
-  fulfilled_at: string | null
-  csr_partners?: { name: string }
-}
 
 interface TokenWalletProps {
   profile: Profile
@@ -176,9 +153,8 @@ export default function TokenWallet({ profile, transactions, redemptions }: Toke
                           </div>
                         </div>
                         <div
-                          className={`text-lg font-bold ${
-                            transaction.transaction_type === "redeemed" ? "text-red-500" : "text-green-500"
-                          }`}
+                          className={`text-lg font-bold ${transaction.transaction_type === "redeemed" ? "text-red-500" : "text-green-500"
+                            }`}
                         >
                           {transaction.transaction_type === "redeemed" ? "-" : "+"}
                           {transaction.amount.toLocaleString()}

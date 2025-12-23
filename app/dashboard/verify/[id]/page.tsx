@@ -24,7 +24,12 @@ export default async function VerifyTaskPage({ params }: { params: Promise<{ id:
     .select(
       `
       *,
-      profiles!tasks_claimed_by_fkey(id, full_name, avatar_url, role)
+      submitted_by:claimed_by (
+        id,
+        display_name,
+        avatar_url,
+        role
+      )
     `,
     )
     .eq("id", id)

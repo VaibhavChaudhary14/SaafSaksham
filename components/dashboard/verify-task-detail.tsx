@@ -4,6 +4,7 @@ import type { Profile, Task, TaskProof } from "@/lib/types/database"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { verificationService } from "@/lib/services/verification-service"
 import DashboardLayout from "@/components/dashboard/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -80,17 +81,16 @@ export default function VerifyTaskDetail({ task, proofs, profile }: VerifyTaskDe
   const handleVerify = async (approved: boolean) => {
     setIsLoading(true)
     setError(null)
-    const supabase = createClient()
 
     try {
       // Calculate overall score
       const overallScore = Math.round((qualityScore[0] + cleanlinessScore[0] + impactScore[0]) / 3)
 
-      // Create verification record
+      // Prepare verification data
       const verificationData = {
         task_id: task.id,
         verifier_id: profile.id,
-        status: approved ? "approved" : "rejected",
+        status: approved ? "approved" : "rejected" as any, // Cast to match type if needed
         quality_score: qualityScore[0],
         cleanliness_score: cleanlinessScore[0],
         impact_score: impactScore[0],
@@ -98,73 +98,8 @@ export default function VerifyTaskDetail({ task, proofs, profile }: VerifyTaskDe
         feedback: feedback || null,
       }
 
-      const { error: verificationError } = await supabase.from("verifications").insert(verificationData)
-
-      if (verificationError) throw verificationError
-
-      // Update task status
-      const { error: taskError } = await supabase
-        .from("tasks")
-        .update({
-          status: approved ? "verified" : "rejected",
-          verified_at: approved ? new Date().toISOString() : null,
-        })
-        .eq("id", task.id)
-
-      if (taskError) throw taskError
-
-      // If approved, award tokens and XP
-      if (approved && task.claimed_by) {
-        // Award tokens
-        const { error: tokensError } = await supabase.from("tokens").insert({
-          user_id: task.claimed_by,
-          task_id: task.id,
-          amount: task.token_reward,
-          transaction_type: "earned",
-          description: `Task completed: ${task.title}`,
-        })
-
-        if (tokensError) throw tokensError
-
-        // Update profile with XP and increment task count
-        const { data: currentProfile } = await supabase
-          .from("profiles")
-          .select("total_xp, total_tokens, tasks_completed, current_streak")
-          .eq("id", task.claimed_by)
-          .single()
-
-        if (currentProfile) {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .update({
-              total_xp: currentProfile.total_xp + task.xp_reward,
-              total_tokens: currentProfile.total_tokens + task.token_reward,
-              tasks_completed: currentProfile.tasks_completed + 1,
-              current_streak: currentProfile.current_streak + 1,
-            })
-            .eq("id", task.claimed_by)
-
-          if (profileError) throw profileError
-        }
-
-        // Create notification
-        await supabase.from("notifications").insert({
-          user_id: task.claimed_by,
-          type: "task_verified",
-          title: "Task Verified!",
-          message: `Your task "${task.title}" has been verified. You earned ${task.token_reward} tokens and ${task.xp_reward} XP!`,
-          link: `/dashboard/tasks/${task.id}`,
-        })
-      } else if (!approved && task.claimed_by) {
-        // Create rejection notification
-        await supabase.from("notifications").insert({
-          user_id: task.claimed_by,
-          type: "task_rejected",
-          title: "Task Rejected",
-          message: `Your task "${task.title}" was rejected. Please review the feedback and try again.`,
-          link: `/dashboard/tasks/${task.id}`,
-        })
-      }
+      // Submit using service
+      await verificationService.submitVerification(verificationData, task)
 
       router.push("/dashboard/verify")
     } catch (err) {

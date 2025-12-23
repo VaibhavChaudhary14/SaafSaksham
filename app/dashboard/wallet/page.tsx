@@ -20,7 +20,7 @@ export default async function WalletPage() {
 
   // Fetch token transactions
   const { data: transactions } = await supabase
-    .from("tokens")
+    .from("token_transactions")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
