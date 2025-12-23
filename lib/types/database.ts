@@ -31,7 +31,8 @@ export interface Profile {
   display_name: string
   phone?: string | null
   role: UserRole
-  avatar_url?: string | null
+  avatar_url?: string | null;
+  full_name?: string;
   location?: any // GEOGRAPHY(POINT) is complex to type directly, treated as any or GeoJSON
   city?: string | null
   state?: string | null
@@ -241,7 +242,10 @@ export interface Redemption {
 
   status: "pending" | "approved" | "delivered" | "cancelled"
 
-  delivery_details?: Record<string, any> | null
+  csr_partners?: {
+    name: string;
+  };
+
   redemption_code?: string | null
 
   created_at: string
