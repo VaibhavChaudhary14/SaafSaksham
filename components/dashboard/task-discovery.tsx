@@ -276,7 +276,7 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
+                  <TaskCard key={task.id} task={task} getCategoryIcon={getCategoryIcon} />
                 ))
               ) : (
                 <div className="col-span-full py-12 text-center">

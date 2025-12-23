@@ -40,7 +40,7 @@ import type { RedemptionOption } from "@/lib/types/database"
 import { useEffect } from "react"
 // ... imports ...
 
-export default function RewardsCatalog({ profile }: { profile: Profile }) {
+export default function RewardsCatalog({ profile, partners }: RewardsCatalogProps) {
   const router = useRouter()
   const [rewards, setRewards] = useState<RedemptionOption[]>([])
   const [loading, setLoading] = useState(true)
@@ -248,7 +248,7 @@ export default function RewardsCatalog({ profile }: { profile: Profile }) {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  {selectedReward.icon}
+                  {selectedReward.icon_name && getIcon(selectedReward.icon_name)}
                 </div>
                 <div>
                   <p className="font-semibold">{selectedReward.title}</p>
@@ -260,7 +260,7 @@ export default function RewardsCatalog({ profile }: { profile: Profile }) {
                   <span className="text-sm text-muted-foreground">Cost:</span>
                   <span className="flex items-center gap-1 font-bold text-primary">
                     <Coins className="h-4 w-4" />
-                    {selectedReward.tokens.toLocaleString()} tokens
+                    {selectedReward.tokens_required.toLocaleString()} tokens
                   </span>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
@@ -270,7 +270,7 @@ export default function RewardsCatalog({ profile }: { profile: Profile }) {
                 <div className="mt-2 flex items-center justify-between border-t pt-2">
                   <span className="text-sm text-muted-foreground">After Redemption:</span>
                   <span className="font-bold text-green-600">
-                    {(profile.total_tokens - selectedReward.tokens).toLocaleString()} tokens
+                    {(profile.total_tokens - selectedReward.tokens_required).toLocaleString()} tokens
                   </span>
                 </div>
               </div>
