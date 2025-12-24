@@ -1,8 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase/config";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { createClient } from "@/lib/supabase/client";
 
 interface AuthContextType {
     user: User | null;
@@ -16,56 +17,89 @@ const AuthContext = createContext<AuthContextType>({
     isAuthenticated: false,
 });
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export function useAuth() {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within AuthProvider");
+    }
+    return context;
+}
+
+interface AuthProviderProps {
+    children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log("AuthProvider: Initializing...");
+        // Firebase emits null initially, then the actual user state
+        // This prevents race conditions during page loads
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                setUser(firebaseUser);
 
-        // Safety timeout: If Firebase doesn't respond in 5s, stop loading to allow UI to render
-        const safetyTimeout = setTimeout(() => {
-            console.warn("AuthProvider: Firebase initialization timed out. Forcing loading=false.");
-            setLoading((prev) => {
-                if (prev) return false;
-                return prev;
-            });
-        }, 5000);
+                // Sync Firebase user with Supabase
+                await syncUserWithSupabase(firebaseUser);
+            } else {
+                setUser(null);
+            }
 
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            console.log("AuthProvider: Check finished. User:", firebaseUser ? "Logged In" : "Logged Out");
-            clearTimeout(safetyTimeout);
-            setUser(firebaseUser);
-            setLoading(false);
-        }, (error) => {
-            console.error("AuthProvider: Firebase Error:", error);
-            clearTimeout(safetyTimeout);
             setLoading(false);
         });
 
-        return () => {
-            clearTimeout(safetyTimeout);
-            unsubscribe();
-        };
+        return () => unsubscribe();
     }, []);
 
-    const value = {
-        user,
-        loading,
-        isAuthenticated: !!user,
-    };
-
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider
+            value={{
+                user,
+                loading,
+                isAuthenticated: !!user,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
-};
+}
 
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
+/**
+ * Syncs Firebase user with Supabase database
+ * Uses Firebase UID as primary identity
+ */
+async function syncUserWithSupabase(firebaseUser: User) {
+    try {
+        const supabase = createClient();
+
+        // Check if profile exists
+        const { data: existingProfile } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("id", firebaseUser.uid)
+            .single();
+
+        if (!existingProfile) {
+            // Create profile using Firebase UID
+            const { error } = await supabase.from("profiles").insert({
+                id: firebaseUser.uid,
+                display_name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
+                phone: firebaseUser.phoneNumber || null,
+                avatar_url: firebaseUser.photoURL || null,
+                role: "citizen",
+                total_tokens: 0,
+                total_xp: 0,
+                current_streak: 0,
+                tasks_completed: 0,
+                tasks_verified: 0,
+            });
+
+            if (error) {
+                console.error("[AuthContext] Profile creation error:", error);
+            }
+        }
+    } catch (error) {
+        console.error("[AuthContext] Supabase sync error:", error);
     }
-    return context;
-};
+}

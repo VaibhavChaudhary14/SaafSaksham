@@ -1,91 +1,96 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/context/AuthContext"
-import { createClient } from "@/lib/supabase/client"
-import TaskDiscovery from "@/components/dashboard/task-discovery"
-import type { Profile } from "@/lib/types/database"
-import { Loader2 } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { ProtectedRoute } from "@/components/auth/route-guards";
+import { createClient } from "@/lib/supabase/client";
+import TaskDiscovery from "@/components/dashboard/task-discovery";
+import { Loader2 } from "lucide-react";
+// import type { Profile } from "@/lib/types/database" // Warning: This might not exist yet. I should assume it does or define it locally to be safe, or just use 'any' if I can't find it. The user snippet imports it. I will keep the import but if it fails I'll need to fix it.
+// Checking file listing earlier... `lib/types` existed. `lib/types/database` might not.
+// I will defining the interface locally as per user snippet "Profiles Table Structure" block which had an interface.
+// Actually, better to import if it exists, but since I can't be sure, I'll define it or use 'any'.
+// User snippet had `import type { Profile } from "@/lib/types/database"`.
+// I will try to use `any` for profile initially to avoid build error if type is missing, OR define the interface inline if I want to be strict.
+// User snippet provided interface Profile. I will add it to `lib/types/database.ts` if it doesn't exist?
+// No, I will just define it locally for now to ensure this file works, or create the types file.
+// Let's create the types file first in a separate tool call if needed?
+// Actually, I'll just define it inline to match the snippet perfectly? No, snippet imports it.
+// I'll define it inline to be safe.
 
-import { auth } from "@/lib/firebase/config"
+interface Profile {
+  id: string; // Firebase UID (PRIMARY KEY)
+  display_name: string; // From Firebase
+  phone: string | null; // Optional
+  avatar_url: string | null; // From Google OAuth
+  role: "citizen" | "admin" | "verifier";
+  total_tokens: number;
+  total_xp: number;
+  current_streak: number;
+  tasks_completed: number;
+  tasks_verified: number;
+  created_at: string; // timestamp usually comes as string from JSON
+  updated_at: string;
+}
 
 export default function DashboardPage() {
-  const { user, loading: authLoading } = useAuth()
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-  const supabase = createClient()
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
+  );
+}
+
+function DashboardContent() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Strict route guard: Wait for AuthContext to resolve
-    if (authLoading) return
-
-    if (!user) {
-      router.replace("/auth/login")
-      return
-    }
-
-    const fetchProfile = async () => {
-      if (!user) return
-
-      try {
-        // Try to fetch profile from Supabase by Firebase UID
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.uid)
-          .single()
-
-        if (error || !data) {
-          // Fallback/Mock profile if the user exists in Firebase but not in Supabase yet
-          const mockProfile: Profile = {
-            id: user.uid,
-            display_name: user.displayName || user.email?.split("@")[0] || "User",
-            full_name: user.displayName || "",
-            role: "citizen",
-            total_tokens: 0,
-            total_xp: 0,
-            level: 1,
-            current_streak: 0,
-            longest_streak: 0,
-            verification_level: 1,
-            tasks_completed: 0,
-            tasks_verified: 0,
-            impact_score: 0,
-            phone: "",
-            avatar_url: user.photoURL || "",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }
-          setProfile(mockProfile)
-        } else {
-          setProfile(data)
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     if (user) {
-      fetchProfile()
+      fetchProfile();
     }
-  }, [user, authLoading, router, supabase])
+  }, [user]);
 
-  if (authLoading || loading) {
+  const fetchProfile = async () => {
+    if (!user) return;
+
+    try {
+      const supabase = createClient();
+
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", user.uid).single();
+
+      if (error) {
+        console.error("[Dashboard] Profile fetch error:", error);
+        return;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error("[Dashboard] Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0A0A0B]">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground animate-pulse">Loading your dashboard...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
-    )
+    );
   }
 
-  if (!profile) return null
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
+          <p className="text-muted-foreground">Unable to load your profile. Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
+  }
 
-  return <TaskDiscovery profile={profile} />
+  return <TaskDiscovery profile={profile} />;
 }
