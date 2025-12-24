@@ -18,13 +18,14 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Sparkles, Mail, Lock, User, Phone, ArrowRight, Github } from "lucide-react"
+import { Sparkles, Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 
 export default function SignUpPage() {
   const { user, loading: authLoading } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [fullName, setFullName] = useState("")
   const [phone, setPhone] = useState("")
   const [role, setRole] = useState<"citizen" | "verifier">("citizen")
@@ -82,33 +83,43 @@ export default function SignUpPage() {
         toast.success("Account created successfully!")
       }
 
-      router.push("/dashboard")
-    } catch (error: any) {
+      // No explicit redirect needed - useEffect will handle it
+    } catch (error: unknown) {
       console.error(error)
       let errorMessage = "Failed to create account. Please try again."
+      setIsLoading(false) // Only stop loading on error
 
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "This email is already registered. Please log in instead."
-      } else if (error.code === "auth/weak-password") {
-        errorMessage = "Password should be at least 6 characters long."
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address."
+      if (typeof error === "object" && error !== null && "code" in error) {
+        const errorCode = (error as { code: string }).code
+        if (errorCode === "auth/email-already-in-use") {
+          errorMessage = "This email is already registered. Please log in instead."
+        } else if (errorCode === "auth/weak-password") {
+          errorMessage = "Password should be at least 6 characters long."
+        } else if (errorCode === "auth/invalid-email") {
+          errorMessage = "Please enter a valid email address."
+        }
       }
 
       toast.error(errorMessage)
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const handleGoogleSignIn = async () => {
+    if (isLoading) return
+    setIsLoading(true)
+
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
       toast.success("Signed up with Google")
-      router.push("/dashboard")
-    } catch (error: any) {
-      toast.error(error.message || "Google sign-in failed")
+      // No explicit redirect needed
+    } catch (error: unknown) {
+      setIsLoading(false)
+      let errorMessage = "Google sign-in failed"
+      if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      toast.error(errorMessage)
     }
   }
 
@@ -199,15 +210,22 @@ export default function SignUpPage() {
                     <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
+                      className="px-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
                       required
                       minLength={6}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -253,7 +271,7 @@ export default function SignUpPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <Button
                 variant="outline"
                 onClick={handleGoogleSignIn}
@@ -278,13 +296,6 @@ export default function SignUpPage() {
                   />
                 </svg>
                 Google
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all duration-300"
-              >
-                <Github className="mr-2 h-4 w-4" />
-                GitHub
               </Button>
             </div>
           </CardContent>

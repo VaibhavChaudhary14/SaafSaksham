@@ -15,13 +15,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Sparkles, Mail, Lock, ArrowRight, Github } from "lucide-react"
+import { Sparkles, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 
 export default function LoginPage() {
   const { user, loading: authLoading } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -39,31 +40,42 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       toast.success("Welcome back!")
-      router.push("/dashboard")
-    } catch (error: any) {
+      // No explicit redirect needed - useEffect will handle it
+    } catch (error: unknown) {
       console.error(error)
       let errorMessage = "Failed to login. Please check your credentials."
+      setIsLoading(false) // Only stop loading on error
 
-      if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-        errorMessage = "Invalid email or password. Please try again."
-      } else if (error.code === "auth/too-many-requests") {
-        errorMessage = "Too many failed attempts. Please try again later."
+      if (typeof error === "object" && error !== null && "code" in error) {
+        const errorCode = (error as { code: string }).code
+        if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-credential") {
+          errorMessage = "Invalid email or password. Please try again."
+        } else if (errorCode === "auth/too-many-requests") {
+          errorMessage = "Too many failed attempts. Please try again later."
+        }
       }
 
       toast.error(errorMessage)
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
+    // Prevent multiple clicks
+    if (isLoading) return
+    setIsLoading(true)
+    
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
       toast.success("Logged in with Google")
-      router.push("/dashboard")
-    } catch (error: any) {
-      toast.error(error.message || "Google sign-in failed")
+      // No explicit redirect needed
+    } catch (error: unknown) {
+        setIsLoading(false)
+        let errorMessage = "Google sign-in failed"
+        if (error instanceof Error) {
+            errorMessage = error.message
+        }
+      toast.error(errorMessage)
     }
   }
 
@@ -127,13 +139,20 @@ export default function LoginPage() {
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
-                    type="password"
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
+                    type={showPassword ? "text" : "password"}
+                    className="px-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-muted-foreground hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -165,7 +184,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <Button
                 variant="outline"
                 onClick={handleGoogleLogin}
@@ -190,13 +209,6 @@ export default function LoginPage() {
                   />
                 </svg>
                 Google
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all duration-300"
-              >
-                <Github className="mr-2 h-4 w-4" />
-                GitHub
               </Button>
             </div>
           </CardContent>
