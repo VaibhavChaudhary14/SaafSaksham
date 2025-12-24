@@ -21,14 +21,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log("AuthProvider: Initializing...");
+
+        // Safety timeout: If Firebase doesn't respond in 5s, stop loading to allow UI to render
+        const safetyTimeout = setTimeout(() => {
+            console.warn("AuthProvider: Firebase initialization timed out. Forcing loading=false.");
+            setLoading((prev) => {
+                if (prev) return false;
+                return prev;
+            });
+        }, 5000);
+
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            console.log("AuthProvider: Check finished. User:", firebaseUser ? "Logged In" : "Logged Out");
+            clearTimeout(safetyTimeout);
             setUser(firebaseUser);
-            // Crucial: We only lower the loading flag AFTER we have a decided user state
-            // This prevents the "flash of login" or premature redirects
+            setLoading(false);
+        }, (error) => {
+            console.error("AuthProvider: Firebase Error:", error);
+            clearTimeout(safetyTimeout);
             setLoading(false);
         });
 
-        return () => unsubscribe();
+        return () => {
+            clearTimeout(safetyTimeout);
+            unsubscribe();
+        };
     }, []);
 
     const value = {

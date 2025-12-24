@@ -60,16 +60,38 @@ const AuthProvider = ({ children })=>{
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "AuthProvider.useEffect": ()=>{
+            console.log("AuthProvider: Initializing...");
+            // Safety timeout: If Firebase doesn't respond in 5s, stop loading to allow UI to render
+            const safetyTimeout = setTimeout({
+                "AuthProvider.useEffect.safetyTimeout": ()=>{
+                    console.warn("AuthProvider: Firebase initialization timed out. Forcing loading=false.");
+                    setLoading({
+                        "AuthProvider.useEffect.safetyTimeout": (prev)=>{
+                            if (prev) return false;
+                            return prev;
+                        }
+                    }["AuthProvider.useEffect.safetyTimeout"]);
+                }
+            }["AuthProvider.useEffect.safetyTimeout"], 5000);
             const unsubscribe = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["onAuthStateChanged"])(__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$firebase$2f$config$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"], {
                 "AuthProvider.useEffect.unsubscribe": (firebaseUser)=>{
+                    console.log("AuthProvider: Check finished. User:", firebaseUser ? "Logged In" : "Logged Out");
+                    clearTimeout(safetyTimeout);
                     setUser(firebaseUser);
-                    // Crucial: We only lower the loading flag AFTER we have a decided user state
-                    // This prevents the "flash of login" or premature redirects
+                    setLoading(false);
+                }
+            }["AuthProvider.useEffect.unsubscribe"], {
+                "AuthProvider.useEffect.unsubscribe": (error)=>{
+                    console.error("AuthProvider: Firebase Error:", error);
+                    clearTimeout(safetyTimeout);
                     setLoading(false);
                 }
             }["AuthProvider.useEffect.unsubscribe"]);
             return ({
-                "AuthProvider.useEffect": ()=>unsubscribe()
+                "AuthProvider.useEffect": ()=>{
+                    clearTimeout(safetyTimeout);
+                    unsubscribe();
+                }
             })["AuthProvider.useEffect"];
         }
     }["AuthProvider.useEffect"], []);
@@ -83,7 +105,7 @@ const AuthProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/context/AuthContext.tsx",
-        lineNumber: 41,
+        lineNumber: 59,
         columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0));
 };

@@ -77,29 +77,13 @@ const AuthProvider = ({ children })=>{
     const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        console.log("AuthProvider: Initializing...");
-        // Safety timeout: If Firebase doesn't respond in 5s, stop loading to allow UI to render
-        const safetyTimeout = setTimeout(()=>{
-            console.warn("AuthProvider: Firebase initialization timed out. Forcing loading=false.");
-            setLoading((prev)=>{
-                if (prev) return false;
-                return prev;
-            });
-        }, 5000);
         const unsubscribe = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["onAuthStateChanged"])(__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$firebase$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["auth"], (firebaseUser)=>{
-            console.log("AuthProvider: Check finished. User:", firebaseUser ? "Logged In" : "Logged Out");
-            clearTimeout(safetyTimeout);
             setUser(firebaseUser);
-            setLoading(false);
-        }, (error)=>{
-            console.error("AuthProvider: Firebase Error:", error);
-            clearTimeout(safetyTimeout);
+            // Crucial: We only lower the loading flag AFTER we have a decided user state
+            // This prevents the "flash of login" or premature redirects
             setLoading(false);
         });
-        return ()=>{
-            clearTimeout(safetyTimeout);
-            unsubscribe();
-        };
+        return ()=>unsubscribe();
     }, []);
     const value = {
         user,
@@ -111,7 +95,7 @@ const AuthProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/context/AuthContext.tsx",
-        lineNumber: 59,
+        lineNumber: 41,
         columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -123,6 +107,18 @@ const useAuth = ()=>{
     return context;
 };
 }),
+"[externals]/next/dist/server/app-render/after-task-async-storage.external.js [external] (next/dist/server/app-render/after-task-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/after-task-async-storage.external.js", () => require("next/dist/server/app-render/after-task-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/dynamic-access-async-storage.external.js [external] (next/dist/server/app-render/dynamic-access-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/dynamic-access-async-storage.external.js", () => require("next/dist/server/app-render/dynamic-access-async-storage.external.js"));
+
+module.exports = mod;
+}),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__a45a1bfe._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__e48defd5._.js.map
