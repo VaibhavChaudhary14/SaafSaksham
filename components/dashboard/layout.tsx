@@ -4,7 +4,8 @@ import type { Profile } from "@/lib/types/database"
 import type React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { auth } from "@/lib/firebase/config"
+import { signOut } from "firebase/auth"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -21,9 +22,12 @@ export default function DashboardLayout({ children, profile }: DashboardLayoutPr
   const router = useRouter()
 
   const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push("/")
+    try {
+      await signOut(auth)
+      router.push("/auth/login")
+    } catch (error) {
+      console.error("Logout failed", error)
+    }
   }
 
   const navItems = [
@@ -58,9 +62,8 @@ export default function DashboardLayout({ children, profile }: DashboardLayoutPr
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                      pathname === item.href ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex items-center gap-2 text-sm font-medium transition-colors ${pathname === item.href ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
