@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { Mail, Lock, Eye, EyeOff, User, Phone, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { signupSchema, type SignupValues } from "@/lib/validations/auth"
@@ -77,7 +77,6 @@ export function SignupForm() {
             router.replace("/dashboard")
         } catch (error: unknown) {
             console.error(error)
-            setIsLoading(false)
             let errorMessage = "Failed to create account. Please try again."
 
             if (typeof error === "object" && error !== null && "code" in error) {
@@ -92,6 +91,8 @@ export function SignupForm() {
             }
 
             toast.error(errorMessage)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -101,45 +102,39 @@ export function SignupForm() {
 
             <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-white/10" />
+                    <span className="w-full border-t border-gray-200 dark:border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-[#0A0A0B] px-2 text-muted-foreground">Or sign up with email</span>
+                    <span className="bg-[#F7F7F5] dark:bg-[#191919] px-2 text-gray-500">Or sign up with email</span>
                 </div>
             </div>
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="fullName" className="text-white/80">Full Name</Label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                id="fullName"
-                                placeholder="John Doe"
-                                disabled={isLoading}
-                                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
-                                {...form.register("fullName")}
-                            />
-                        </div>
+                        <Label htmlFor="fullName" className="text-gray-900 dark:text-gray-100">Full Name</Label>
+                        <Input
+                            id="fullName"
+                            placeholder="John Doe"
+                            disabled={isLoading}
+                            className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
+                            {...form.register("fullName")}
+                        />
                         {form.formState.errors.fullName && (
                             <p className="text-xs text-red-500">{form.formState.errors.fullName.message}</p>
                         )}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-white/80">Email Address</Label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                id="email"
-                                placeholder="name@example.com"
-                                type="email"
-                                disabled={isLoading}
-                                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
-                                {...form.register("email")}
-                            />
-                        </div>
+                        <Label htmlFor="email" className="text-gray-900 dark:text-gray-100">Email Address</Label>
+                        <Input
+                            id="email"
+                            placeholder="name@example.com"
+                            type="email"
+                            disabled={isLoading}
+                            className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
+                            {...form.register("email")}
+                        />
                         {form.formState.errors.email && (
                             <p className="text-xs text-red-500">{form.formState.errors.email.message}</p>
                         )}
@@ -148,38 +143,34 @@ export function SignupForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-white/80">Phone (Optional)</Label>
-                        <div className="relative">
-                            <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                id="phone"
-                                placeholder="+91 98765 43210"
-                                type="tel"
-                                disabled={isLoading}
-                                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
-                                {...form.register("phone")}
-                            />
-                        </div>
+                        <Label htmlFor="phone" className="text-gray-900 dark:text-gray-100">Phone (Optional)</Label>
+                        <Input
+                            id="phone"
+                            placeholder="+91 98765 43210"
+                            type="tel"
+                            disabled={isLoading}
+                            className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
+                            {...form.register("phone")}
+                        />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password" university-id="password" className="text-white/80">Password</Label>
+                        <Label htmlFor="password" university-id="password" className="text-gray-900 dark:text-gray-100">Password</Label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 id="password"
                                 placeholder="••••••••"
                                 type={showPassword ? "text" : "password"}
                                 disabled={isLoading}
-                                className="px-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20 transition-all"
+                                className="h-11 pr-10 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
                                 {...form.register("password")}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-2.5 text-muted-foreground hover:text-white transition-colors"
+                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                             >
-                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                             </button>
                         </div>
                         {form.formState.errors.password && (
@@ -189,17 +180,17 @@ export function SignupForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="role" className="text-white/80">I want to</Label>
+                    <Label htmlFor="role" className="text-gray-900 dark:text-gray-100">I want to</Label>
                     <Select
                         onValueChange={(value) => form.setValue("role", value as "citizen" | "verifier")}
                         defaultValue="citizen"
                     >
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white focus:ring-primary/20 transition-all">
+                        <SelectTrigger className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:ring-black dark:focus:ring-white transition-all shadow-sm">
                             <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#1A1A1B] border-white/10 text-white">
-                            <SelectItem value="citizen" className="focus:bg-primary/20">Complete Tasks (Citizen)</SelectItem>
-                            <SelectItem value="verifier" className="focus:bg-primary/20">Verify Tasks (Verifier)</SelectItem>
+                        <SelectContent className="bg-white dark:bg-[#1A1A1B] border-gray-200 dark:border-white/10 text-gray-900 dark:text-white">
+                            <SelectItem value="citizen" className="focus:bg-gray-100 dark:focus:bg-white/10">Complete Tasks (Citizen)</SelectItem>
+                            <SelectItem value="verifier" className="focus:bg-gray-100 dark:focus:bg-white/10">Verify Tasks (Verifier)</SelectItem>
                         </SelectContent>
                     </Select>
                     {form.formState.errors.role && (
@@ -209,12 +200,12 @@ export function SignupForm() {
 
                 <Button
                     type="submit"
-                    className="group w-full bg-primary hover:bg-primary/90 text-white font-semibold py-6 shadow-lg shadow-primary/20 transition-all duration-300"
+                    className="w-full bg-[#1A1A1B] hover:bg-[#2D2D2E] dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black font-medium h-11 transition-all duration-200"
                     disabled={isLoading}
                 >
                     {isLoading ? (
                         <div className="flex items-center gap-2">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                             <span>Creating account...</span>
                         </div>
                     ) : (

@@ -21,6 +21,11 @@ export function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue
         setIsLoading(true)
 
         const provider = new GoogleAuthProvider()
+        // Force account selection for better UX (Notion-style)
+        provider.setCustomParameters({
+            prompt: "select_account"
+        })
+
         try {
             await signInWithPopup(auth, provider)
             toast.success("Logged in with Google")
@@ -43,13 +48,13 @@ export function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all duration-300 py-6"
+                className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-200 py-5 font-normal h-12"
             >
                 {isLoading ? (
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 ) : (
                     <>
-                        <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+                        <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                                 fill="#4285F4"

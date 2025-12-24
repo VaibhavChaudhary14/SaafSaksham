@@ -27,3 +27,11 @@ export const signupSchema = z.object({
 
 export type LoginValues = z.infer<typeof loginSchema>
 export type SignupValues = z.infer<typeof signupSchema>
+
+export const forgotPasswordSchema = z.object({
+    email: z.string().email({
+        message: "Please enter a valid email address.",
+    }),
+})
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
