@@ -297,12 +297,13 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].success("Logged in with Google");
             router.replace("/dashboard");
         } catch (error) {
-            setIsLoading(false);
             let errorMessage = "Google sign-in failed";
             if (error instanceof Error) {
                 errorMessage = error.message;
             }
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].error(errorMessage);
+        } finally{
+            setIsLoading(false);
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -317,7 +318,7 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                 className: "h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"
             }, void 0, false, {
                 fileName: "[project]/components/auth/oauth-buttons.tsx",
-                lineNumber: 48,
+                lineNumber: 49,
                 columnNumber: 21
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
@@ -330,7 +331,7 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                                 fill: "#4285F4"
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/oauth-buttons.tsx",
-                                lineNumber: 52,
+                                lineNumber: 53,
                                 columnNumber: 29
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -338,7 +339,7 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                                 fill: "#34A853"
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/oauth-buttons.tsx",
-                                lineNumber: 56,
+                                lineNumber: 57,
                                 columnNumber: 29
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -346,7 +347,7 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                                 fill: "#FBBC05"
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/oauth-buttons.tsx",
-                                lineNumber: 60,
+                                lineNumber: 61,
                                 columnNumber: 29
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -354,13 +355,13 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                                 fill: "#EA4335"
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/oauth-buttons.tsx",
-                                lineNumber: 64,
+                                lineNumber: 65,
                                 columnNumber: 29
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/auth/oauth-buttons.tsx",
-                        lineNumber: 51,
+                        lineNumber: 52,
                         columnNumber: 25
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -371,19 +372,19 @@ function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue" }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/auth/oauth-buttons.tsx",
-                        lineNumber: 69,
+                        lineNumber: 70,
                         columnNumber: 25
                     }, this)
                 ]
             }, void 0, true)
         }, void 0, false, {
             fileName: "[project]/components/auth/oauth-buttons.tsx",
-            lineNumber: 40,
+            lineNumber: 41,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/auth/oauth-buttons.tsx",
-        lineNumber: 39,
+        lineNumber: 40,
         columnNumber: 9
     }, this);
 }
@@ -449,10 +450,9 @@ function LoginForm() {
         try {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["signInWithEmailAndPassword"])(__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$firebase$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["auth"], data.email, data.password);
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].success("Welcome back!");
-            router.push("/dashboard");
+            router.replace("/dashboard");
         } catch (error) {
             console.error(error);
-            setIsLoading(false);
             let errorMessage = "Failed to login. Please check your credentials.";
             if (typeof error === "object" && error !== null && "code" in error) {
                 const errorCode = error.code;
@@ -463,6 +463,8 @@ function LoginForm() {
                 }
             }
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].error(errorMessage);
+        } finally{
+            setIsLoading(false);
         }
     }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -474,7 +476,7 @@ function LoginForm() {
                 actionPrefix: "Continue"
             }, void 0, false, {
                 fileName: "[project]/components/auth/login-form.tsx",
-                lineNumber: 60,
+                lineNumber: 61,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -486,12 +488,12 @@ function LoginForm() {
                             className: "w-full border-t border-white/10"
                         }, void 0, false, {
                             fileName: "[project]/components/auth/login-form.tsx",
-                            lineNumber: 64,
+                            lineNumber: 65,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/auth/login-form.tsx",
-                        lineNumber: 63,
+                        lineNumber: 64,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -501,18 +503,18 @@ function LoginForm() {
                             children: "Or continue with email"
                         }, void 0, false, {
                             fileName: "[project]/components/auth/login-form.tsx",
-                            lineNumber: 67,
+                            lineNumber: 68,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/auth/login-form.tsx",
-                        lineNumber: 66,
+                        lineNumber: 67,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/auth/login-form.tsx",
-                lineNumber: 62,
+                lineNumber: 63,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -528,7 +530,7 @@ function LoginForm() {
                                 children: "Email Address"
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 73,
+                                lineNumber: 74,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -538,7 +540,7 @@ function LoginForm() {
                                         className: "absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 76,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -553,13 +555,13 @@ function LoginForm() {
                                         ...form.register("email")
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 76,
+                                        lineNumber: 77,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 74,
+                                lineNumber: 75,
                                 columnNumber: 21
                             }, this),
                             form.formState.errors.email && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -567,13 +569,13 @@ function LoginForm() {
                                 children: form.formState.errors.email.message
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 89,
+                                lineNumber: 90,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/auth/login-form.tsx",
-                        lineNumber: 72,
+                        lineNumber: 73,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -589,7 +591,7 @@ function LoginForm() {
                                         children: "Password"
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 95,
+                                        lineNumber: 96,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -598,13 +600,13 @@ function LoginForm() {
                                         children: "Forgot password?"
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 96,
+                                        lineNumber: 97,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 94,
+                                lineNumber: 95,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -614,7 +616,7 @@ function LoginForm() {
                                         className: "absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 104,
+                                        lineNumber: 105,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -627,7 +629,7 @@ function LoginForm() {
                                         ...form.register("password")
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 105,
+                                        lineNumber: 106,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -638,24 +640,24 @@ function LoginForm() {
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/components/auth/login-form.tsx",
-                                            lineNumber: 119,
+                                            lineNumber: 120,
                                             columnNumber: 45
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/components/auth/login-form.tsx",
-                                            lineNumber: 119,
+                                            lineNumber: 120,
                                             columnNumber: 78
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/auth/login-form.tsx",
-                                        lineNumber: 114,
+                                        lineNumber: 115,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 103,
+                                lineNumber: 104,
                                 columnNumber: 21
                             }, this),
                             form.formState.errors.password && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -663,13 +665,13 @@ function LoginForm() {
                                 children: form.formState.errors.password.message
                             }, void 0, false, {
                                 fileName: "[project]/components/auth/login-form.tsx",
-                                lineNumber: 123,
+                                lineNumber: 124,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/auth/login-form.tsx",
-                        lineNumber: 93,
+                        lineNumber: 94,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -683,20 +685,20 @@ function LoginForm() {
                                     className: "h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
                                 }, void 0, false, {
                                     fileName: "[project]/components/auth/login-form.tsx",
-                                    lineNumber: 134,
+                                    lineNumber: 135,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "Signing in..."
                                 }, void 0, false, {
                                     fileName: "[project]/components/auth/login-form.tsx",
-                                    lineNumber: 135,
+                                    lineNumber: 136,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/auth/login-form.tsx",
-                            lineNumber: 133,
+                            lineNumber: 134,
                             columnNumber: 25
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex items-center justify-center gap-2",
@@ -705,37 +707,37 @@ function LoginForm() {
                                     children: "Sign In"
                                 }, void 0, false, {
                                     fileName: "[project]/components/auth/login-form.tsx",
-                                    lineNumber: 139,
+                                    lineNumber: 140,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                     className: "h-4 w-4 transition-transform group-hover:translate-x-1"
                                 }, void 0, false, {
                                     fileName: "[project]/components/auth/login-form.tsx",
-                                    lineNumber: 140,
+                                    lineNumber: 141,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/auth/login-form.tsx",
-                            lineNumber: 138,
+                            lineNumber: 139,
                             columnNumber: 25
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/auth/login-form.tsx",
-                        lineNumber: 127,
+                        lineNumber: 128,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/auth/login-form.tsx",
-                lineNumber: 71,
+                lineNumber: 72,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/auth/login-form.tsx",
-        lineNumber: 59,
+        lineNumber: 60,
         columnNumber: 9
     }, this);
 }

@@ -26,12 +26,13 @@ export function OAuthButtons({ isLoading, setIsLoading, actionPrefix = "Continue
             toast.success("Logged in with Google")
             router.replace("/dashboard")
         } catch (error: unknown) {
-            setIsLoading(false)
             let errorMessage = "Google sign-in failed"
             if (error instanceof Error) {
                 errorMessage = error.message
             }
             toast.error(errorMessage)
+        } finally {
+            setIsLoading(false)
         }
     }
 

@@ -36,10 +36,9 @@ export function LoginForm() {
         try {
             await signInWithEmailAndPassword(auth, data.email, data.password)
             toast.success("Welcome back!")
-            router.push("/dashboard")
+            router.replace("/dashboard")
         } catch (error: unknown) {
             console.error(error)
-            setIsLoading(false)
             let errorMessage = "Failed to login. Please check your credentials."
 
             if (typeof error === "object" && error !== null && "code" in error) {
@@ -52,6 +51,8 @@ export function LoginForm() {
             }
 
             toast.error(errorMessage)
+        } finally {
+            setIsLoading(false)
         }
     }
 
