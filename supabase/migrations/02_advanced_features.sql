@@ -8,7 +8,11 @@
 -- =========================
 -- Function to validate that submission is close to the task location
 CREATE OR REPLACE FUNCTION check_task_proximity()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
   task_loc GEOGRAPHY;
   distance_meters FLOAT;
@@ -41,7 +45,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Trigger to run on new proofs
 DROP TRIGGER IF EXISTS trg_check_proximity ON public.task_proofs;
@@ -56,7 +60,11 @@ EXECUTE FUNCTION check_task_proximity();
 -- =========================
 -- Prevent users from submitting too many tasks too quickly
 CREATE OR REPLACE FUNCTION check_submission_rate_limit()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
   recent_count INTEGER;
   time_window INTERVAL := '5 minutes';
@@ -73,7 +81,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 DROP TRIGGER IF EXISTS trg_rate_limit ON public.task_proofs;
 CREATE TRIGGER trg_rate_limit
@@ -105,7 +113,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_leaderboard_seasonal ON leaderboard_season
 
 -- Refresh function
 CREATE OR REPLACE FUNCTION refresh_seasonal_leaderboard()
-RETURNS void LANGUAGE plpgsql AS $$
+RETURNS void 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   REFRESH MATERIALIZED VIEW CONCURRENTLY leaderboard_seasonal;
 END;
@@ -117,7 +129,11 @@ $$;
 -- =========================
 -- Logic to decay XP/Score for inactive users (e.g., call via pg_cron)
 CREATE OR REPLACE FUNCTION apply_reputation_decay()
-RETURNS void LANGUAGE plpgsql AS $$
+RETURNS void 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   -- Reduce current_streak if no activity for 2 days
   UPDATE public.profiles
@@ -137,7 +153,7 @@ $$;
 -- =========================
 -- 5. RLS POLICIES FOR NEW VIEWS
 -- =========================
-ALTER MATERIALIZED VIEW leaderboard_seasonal ENABLE ROW LEVEL SECURITY;
+-- Materialized Views generally do not support RLS directly in this PostgreSQL version.
+-- Since this is a public leaderboard, we will GRANT SELECT to authenticated and anonymous users.
 
-DROP POLICY IF EXISTS "seasonal_leaderboard_select_all" ON leaderboard_seasonal;
-CREATE POLICY "seasonal_leaderboard_select_all" ON leaderboard_seasonal FOR SELECT USING (true);
+GRANT SELECT ON leaderboard_seasonal TO anon, authenticated, service_role;

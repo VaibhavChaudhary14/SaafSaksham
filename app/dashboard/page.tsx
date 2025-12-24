@@ -8,6 +8,8 @@ import TaskDiscovery from "@/components/dashboard/task-discovery"
 import type { Profile } from "@/lib/types/database"
 import { Loader2 } from "lucide-react"
 
+import { auth } from "@/lib/firebase/config"
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -16,8 +18,11 @@ export default function DashboardPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/auth/login")
+    // Strict route guard: Wait for AuthContext to resolve
+    if (authLoading) return
+
+    if (!user) {
+      router.replace("/auth/login")
       return
     }
 
