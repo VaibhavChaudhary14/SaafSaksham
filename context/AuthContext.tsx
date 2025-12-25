@@ -96,7 +96,7 @@ async function syncUserWithSupabase(firebaseUser: User) {
             });
 
             if (error) {
-                console.error("[AuthContext] Profile creation error:", error);
+                console.error("[AuthContext] Profile creation error:", JSON.stringify(error, null, 2));
             }
         }
     } catch (error) {

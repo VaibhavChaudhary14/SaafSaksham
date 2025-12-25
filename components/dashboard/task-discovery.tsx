@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import DashboardLayout from "@/components/dashboard/layout"
 import TaskMap from "@/components/dashboard/task-map"
 import TaskCard from "@/components/dashboard/task-card"
-import { MapPin, Search, Coins, TrendingUp, Award, Zap, LayoutGrid, MapIcon, SlidersHorizontal } from "lucide-react"
+import Link from "next/link"
+import { useGeolocation } from "@/hooks/use-geolocation"
+import { MapPin, Search, Coins, TrendingUp, Award, Zap, LayoutGrid, MapIcon, SlidersHorizontal, Navigation, PlusCircle } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { taskService, type TaskFilters } from "@/lib/services/task-service"
 
@@ -23,9 +25,11 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [severityFilter, setSeverityFilter] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<string>("newest")
+  const [sortBy, setSortBy] = useState<string>("nearest") // Default to nearest
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [showFilters, setShowFilters] = useState(false)
+
+  const { location, error: geoError } = useGeolocation()
 
   // Real database fetch
   useEffect(() => {
@@ -39,20 +43,28 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
         if (categoryFilter !== "all") {
           filters.category = [categoryFilter as TaskCategory]
         }
-        // Add severity filter to TaskService if needed, or filter client side
-        // For now, let's filter client side for severity and sort
+
+        // If "Nearest" is selected and we have location, use the geospatial query
+        if (sortBy === "nearest" && location) {
+          filters.nearby = {
+            lat: location.latitude,
+            lng: location.longitude,
+            radius: 25000 // 25km radius
+          }
+        }
 
         const fetchedTasks = await taskService.getTasks(filters)
         setTasks(fetchedTasks)
       } catch (error) {
-        console.error("Failed to load tasks", error)
+        console.error("Failed to load tasks", JSON.stringify(error, null, 2))
       } finally {
         setLoading(false)
       }
     }
 
+    // Debounce effects if needed, but for now simple dependency tracking
     fetchTasks()
-  }, [categoryFilter])
+  }, [categoryFilter, sortBy, location]) // Refetch when location becomes available or sort changes
 
   // Client-side filtering and sorting
   const getFilteredAndSortedTasks = () => {
@@ -241,6 +253,7 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="nearest">Nearest to Me</SelectItem>
                         <SelectItem value="newest">Newest First</SelectItem>
                         <SelectItem value="reward_high">Highest Reward</SelectItem>
                         <SelectItem value="reward_low">Lowest Reward</SelectItem>
@@ -260,6 +273,12 @@ export default function TaskDiscovery({ profile }: TaskDiscoveryProps) {
             <h2 className="text-2xl font-bold">
               Available Tasks <span className="text-muted-foreground">({filteredTasks.length})</span>
             </h2>
+            <Link href="/dashboard/post-task">
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Report Issue
+              </Button>
+            </Link>
           </div>
 
           {loading ? (

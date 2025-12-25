@@ -5,11 +5,10 @@ export type TaskFilters = {
     category?: TaskCategory[]
     severity?: TaskSeverity[]
     status?: "open" | "claimed" | "verified"
-    bounds?: {
-        north: number
-        south: number
-        east: number
-        west: number
+    nearby?: {
+        lat: number
+        lng: number
+        radius?: number // meters
     }
 }
 
@@ -17,19 +16,38 @@ export class TaskService {
     private supabase = createClient()
 
     async getTasks(filters?: TaskFilters) {
-        let query = this.supabase
-            .from("tasks")
-            .select(`
+        let query: any;
+
+        // 1. Base Query Selection
+        if (filters?.nearby) {
+            // Use Geospatial RPC if location is provided
+            query = this.supabase.rpc('get_nearby_tasks', {
+                lat: filters.nearby.lat,
+                long: filters.nearby.lng,
+                radius_meters: filters.nearby.radius || 10000 // Default 10km
+            })
+        } else {
+            // Standard Table Query
+            query = this.supabase.from("tasks").select() // .select() handles the * implicitly for the base
+        }
+
+        // 2. Chain Relationships (Applies to both RPC and Table queries)
+        // We re-state the select to ensure relations are always fetched
+        // Note: For RPC, this works because the RPC returns SETOF tasks
+        query = query.select(`
         *,
-        profiles:posted_by (
+        profiles:profiles!posted_by (
           display_name,
           avatar_url
         )
       `)
-            .order("created_at", { ascending: false })
 
+        // 3. Apply Filters
         if (filters?.status) {
             query = query.eq("status", filters.status)
+        } else if (!filters?.nearby) {
+            // Default ordering for non-geo queries (Geo queries are already ordered by distance in RPC)
+            query = query.order("created_at", { ascending: false })
         }
 
         if (filters?.category && filters.category.length > 0) {
@@ -40,47 +58,23 @@ export class TaskService {
             query = query.in("severity", filters.severity)
         }
 
-        // Geolocation filtering using PostGIS function if bounds provided
-        if (filters?.bounds) {
-            // Note: This assumes a 'tasks_within_bounds' RPC function exists in Supabase
-            // created via:
-            // CREATE OR REPLACE FUNCTION tasks_within_bounds(min_lat float, min_lng float, max_lat float, max_lng float)
-            // RETURNS SETOF tasks AS $$
-            // SELECT * FROM tasks 
-            // WHERE location && ST_MakeEnvelope(min_lng, min_lat, max_lng, max_lat, 4326);
-            // $$ LANGUAGE sql STABLE;
-
-            const { data, error } = await this.supabase.rpc("tasks_within_bounds", {
-                min_lat: filters.bounds.south,
-                min_lng: filters.bounds.west,
-                max_lat: filters.bounds.north,
-                max_lng: filters.bounds.east,
-            })
-
-            if (error) {
-                console.error("Error fetching tasks by location:", error)
-                // Fallback to client-side filtering if RPC fails or not implemented
-                return this.getTasksFallback(filters)
-            }
-            return data as Task[]
-        }
-
         const { data, error } = await query
 
         if (error) {
-            console.error("Error fetching tasks:", error)
+            console.error("Error fetching tasks:", JSON.stringify(error, null, 2))
             return []
         }
 
         return data as Task[]
     }
 
+
     private async getTasksFallback(filters?: TaskFilters) {
         let query = this.supabase
             .from("tasks")
             .select(`
         *,
-        profiles:posted_by (
+        profiles:profiles!posted_by (
           display_name,
           avatar_url
         )
@@ -99,12 +93,12 @@ export class TaskService {
             .from("tasks")
             .select(`
         *,
-        profiles:posted_by (
+        profiles:profiles!posted_by (
           display_name,
           avatar_url,
           verification_level
         ),
-        claimed_profile:claimed_by (
+        claimed_profile:profiles!claimed_by (
           display_name,
           avatar_url
         )

@@ -64,19 +64,17 @@ export interface Task {
   // Classification
   category: TaskCategory
   severity: TaskSeverity
-  difficulty: "easy" | "medium" | "hard"
 
   // Location
-  location: any // GEOGRAPHY(POINT)
+  location_geo?: any // GEOGRAPHY(POINT) - PostGIS string or object
   location_address?: string | null
-  city: string
-  state: string
-  pincode?: string | null
+  city?: string | null
+
+  // Media
+  image_url: string
 
   // Rewards
-  token_reward: number
-  xp_reward: number
-  estimated_time?: number | null
+  reward_amount: number
 
   // Status tracking
   status: TaskStatus
@@ -87,20 +85,19 @@ export interface Task {
   verified_by?: string | null
 
   // Timestamps
-  claimed_at?: string | null
-  submitted_at?: string | null
-  verified_at?: string | null
-  expires_at?: string | null
   created_at: string
   updated_at: string
 
-  // Verification requirements
-  required_proof_types: ProofType[]
-
-  // CSR Partnership
+  // Legacy/Optional/Future compatibility
+  difficulty?: "easy" | "medium" | "hard"
+  state?: string
+  pincode?: string | null
+  token_reward?: number // Alias for reward_amount in legacy code
+  xp_reward?: number
+  expires_at?: string | null
+  required_proof_types?: ProofType[]
   csr_partner_id?: string | null
-  visibility: "public" | "private" | "csr_only"
-
+  visibility?: "public" | "private" | "csr_only"
   tags?: string[] | null
 }
 

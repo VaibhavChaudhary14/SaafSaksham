@@ -61,7 +61,7 @@ function DashboardContent() {
       const { data, error } = await supabase.from("profiles").select("*").eq("id", user.uid).single();
 
       if (error) {
-        console.error("[Dashboard] Profile fetch error:", error);
+        console.error("[Dashboard] Profile fetch error:", JSON.stringify(error, null, 2));
         return;
       }
 

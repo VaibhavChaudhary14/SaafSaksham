@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/middleware.ts"],"sourcesContent":["import { NextResponse, type NextRequest } from \"next/server\";\n\nexport async function middleware(request: NextRequest) {\n  // Supabase Auth Middleware Logic DISABLED for Firebase Integration\n  // The original logic checked for Supabase session cookies which won't exist with Firebase Auth.\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: [\"/((?!_next/static|_next/image|favicon.ico|.*\\\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)\"],\n};\n"],"names":[],"mappings":";;;;;;AAAA;AAAA;;AAEO,eAAe,WAAW,OAAoB;IACnD,mEAAmE;IACnE,gGAAgG;IAChG,OAAO,gMAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;QAAC;KAAoF;AAChG"}}]
+}
