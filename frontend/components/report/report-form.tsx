@@ -13,7 +13,7 @@ const videoConstraints = {
     facingMode: "environment"
 };
 
-export default function ReportForm() {
+export function ReportForm() {
     const webcamRef = useRef<Webcam>(null);
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
@@ -68,8 +68,8 @@ export default function ReportForm() {
     }
 
     return (
-        <div className="flex flex-col space-y-4 p-4 max-w-md mx-auto">
-            <div className="relative rounded-xl overflow-hidden shadow-lg bg-black aspect-video">
+        <div className="flex flex-col space-y-4 p-4 max-w-md mx-auto bg-neo-white border-2 border-black shadow-neo">
+            <div className="relative border-2 border-black shadow-sm overflow-hidden bg-black aspect-video">
                 {!imageSrc ? (
                     <Webcam
                         audio={false}
@@ -83,24 +83,24 @@ export default function ReportForm() {
                 )}
             </div>
 
-            <div className="flex justify-between items-center bg-card p-4 rounded-lg shadow">
+            <div className="flex justify-between items-center bg-neo-white p-4 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <div className="text-sm">
-                    <p className="font-semibold">Location Status</p>
-                    <p className={location.loading ? "text-yellow-500" : location.error ? "text-red-500" : "text-green-500"}>
-                        {location.loading ? "Locating..." : location.error ? "Error" : "GPS Locked"}
+                    <p className="font-bold font-milestone uppercase">GPS SIGNAL</p>
+                    <p className={`font-mono font-bold ${location.loading ? "text-neo-lemon bg-black px-1" : location.error ? "text-red-500" : "text-neo-mint bg-black px-1"}`}>
+                        {location.loading ? "SEARCHING..." : location.error ? "ERROR" : "LOCKED"}
                     </p>
                 </div>
 
                 {!imageSrc ? (
-                    <button onClick={capture} className="p-4 rounded-full bg-blue-600 text-white shadow-lg">
+                    <button onClick={capture} className="p-4 rounded-full bg-neo-blue text-neo-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-cyan-300 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
                         <Camera className="w-6 h-6" />
                     </button>
                 ) : (
                     <div className="flex gap-4">
-                        <button onClick={() => { setImageSrc(null); setFile(null); }} className="p-4 rounded-full bg-gray-600 text-white shadow-lg">
+                        <button onClick={() => { setImageSrc(null); setFile(null); }} className="p-4 rounded-full bg-gray-200 text-neo-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-300 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
                             <RefreshCw className="w-6 h-6" />
                         </button>
-                        <button onClick={handleSubmit} disabled={loading || !location.latitude} className="p-4 rounded-full bg-green-600 text-white shadow-lg disabled:opacity-50">
+                        <button onClick={handleSubmit} disabled={loading || !location.latitude} className="p-4 rounded-full bg-neo-mint text-neo-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-green-400 disabled:opacity-50 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
                             <Send className="w-6 h-6" />
                         </button>
                     </div>

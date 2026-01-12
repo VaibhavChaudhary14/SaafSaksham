@@ -1,96 +1,93 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { ProtectedRoute } from "@/components/auth/route-guards";
-import { createClient } from "@/lib/supabase/client";
-import TaskDiscovery from "@/components/dashboard/task-discovery";
-import { Loader2 } from "lucide-react";
-// import type { Profile } from "@/lib/types/database" // Warning: This might not exist yet. I should assume it does or define it locally to be safe, or just use 'any' if I can't find it. The user snippet imports it. I will keep the import but if it fails I'll need to fix it.
-// Checking file listing earlier... `lib/types` existed. `lib/types/database` might not.
-// I will defining the interface locally as per user snippet "Profiles Table Structure" block which had an interface.
-// Actually, better to import if it exists, but since I can't be sure, I'll define it or use 'any'.
-// User snippet had `import type { Profile } from "@/lib/types/database"`.
-// I will try to use `any` for profile initially to avoid build error if type is missing, OR define the interface inline if I want to be strict.
-// User snippet provided interface Profile. I will add it to `lib/types/database.ts` if it doesn't exist?
-// No, I will just define it locally for now to ensure this file works, or create the types file.
-// Let's create the types file first in a separate tool call if needed?
-// Actually, I'll just define it inline to match the snippet perfectly? No, snippet imports it.
-// I'll define it inline to be safe.
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { ReportForm } from '@/components/report/report-form';
+import { TaskMap } from '@/components/map/task-map';
+import { TaskFeed } from '@/components/feed/task-feed';
+import { Leaderboard } from '@/components/leaderboard/leaderboard';
 
-interface Profile {
-  id: string; // Firebase UID (PRIMARY KEY)
-  display_name: string; // From Firebase
-  phone: string | null; // Optional
-  avatar_url: string | null; // From Google OAuth
-  role: "citizen" | "admin" | "verifier";
-  total_tokens: number;
-  total_xp: number;
-  current_streak: number;
-  tasks_completed: number;
-  tasks_verified: number;
-  created_at: string; // timestamp usually comes as string from JSON
-  updated_at: string;
-}
-
-export default function DashboardPage() {
-  return (
-    <ProtectedRoute>
-      <DashboardContent />
-    </ProtectedRoute>
-  );
-}
-
-function DashboardContent() {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function Dashboard() {
+  const { loading, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      fetchProfile();
+    if (!loading && !isAuthenticated) {
+      router.push('/auth/login');
     }
-  }, [user]);
-
-  const fetchProfile = async () => {
-    if (!user) return;
-
-    try {
-      const supabase = createClient();
-
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", user.uid).single();
-
-      if (error) {
-        console.error("[Dashboard] Profile fetch error:", JSON.stringify(error, null, 2));
-        return;
-      }
-
-      setProfile(data);
-    } catch (error) {
-      console.error("[Dashboard] Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [loading, isAuthenticated, router]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
-  if (!profile) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
-          <p className="text-muted-foreground">Unable to load your profile. Please try refreshing the page.</p>
+  if (!isAuthenticated) return null;
+
+  return (
+    <main className="min-h-screen bg-neo-white font-sans text-neo-black pb-20 md:pb-0">
+      {/* Hero Section with Map & Report Form */}
+      <section className="w-full bg-grid border-b-4 border-black py-12 lg:py-20">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-16">
+
+            {/* Left Column: Title & Report Form */}
+            <div className="w-full lg:w-1/2 space-y-8">
+              <div className="bg-neo-white border-2 border-black shadow-neo p-8">
+                <h1 className="font-sirukota text-5xl lg:text-6xl font-black tracking-tight mb-4 leading-none">
+                  FIX YOUR CITY. <br />
+                  <span className="text-neo-pink underline decoration-4 underline-offset-4 decoration-black px-1">WIN REWARDS.</span>
+                </h1>
+                <p className="font-story text-xl font-bold border-l-4 border-black pl-4">
+                  Snap a photo, get AI verification, and earn XP.
+                </p>
+              </div>
+
+              <ReportForm />
+            </div>
+
+            {/* Right Column: Square Map */}
+            <div className="w-full lg:w-1/2 sticky top-24">
+              <div className="bg-white p-2 border-2 border-black shadow-neo">
+                <TaskMap className="w-full aspect-square border-2 border-black" />
+              </div>
+              <div className="mt-4 flex items-center justify-between font-mono font-bold text-sm bg-neo-lemon border-2 border-black p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <span>LIVE ACTIVE ZONES</span>
+                <span>DELHI NCR</span>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
-    );
-  }
+      </section>
 
-  return <TaskDiscovery profile={profile} />;
+      {/* Content Section */}
+      <section className="container mx-auto px-4 py-12 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Feed Column */}
+          <div className="lg:col-span-2">
+            <TaskFeed />
+          </div>
+
+          {/* Sidebar Column */}
+          <div className="space-y-8">
+            <Leaderboard />
+
+            {/* Stats Card (Placeholder) */}
+            <div className="bg-primary/5 border rounded-xl p-6">
+              <h3 className="font-semibold mb-2">Your Impact</h3>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-muted-foreground">Total Reports</span>
+                <span className="font-bold text-xl">12</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-primary w-[60%]"></div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">150 XP to next level</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

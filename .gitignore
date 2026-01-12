@@ -34,7 +34,7 @@ out/
 *.swo
 
 # Project specific
-backend/api/
+# backend/api/
 backend/__pycache__/
 backend/venv/
 backend/.venv/

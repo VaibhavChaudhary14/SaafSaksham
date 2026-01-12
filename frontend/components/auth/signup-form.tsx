@@ -112,12 +112,12 @@ export function SignupForm() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="fullName" className="text-gray-900 dark:text-gray-100">Full Name</Label>
+                        <Label htmlFor="fullName" className="text-neo-black">Full Name</Label>
                         <Input
                             id="fullName"
                             placeholder="John Doe"
                             disabled={isLoading}
-                            className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
+                            className="h-11 bg-neo-white border-2 border-black text-neo-black placeholder:text-muted-foreground focus:border-black focus:ring-0 transition-all shadow-sm"
                             {...form.register("fullName")}
                         />
                         {form.formState.errors.fullName && (
@@ -126,7 +126,7 @@ export function SignupForm() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-gray-900 dark:text-gray-100">Email Address</Label>
+                        <Label htmlFor="email" className="text-neo-black">Email Address</Label>
                         <Input
                             id="email"
                             placeholder="name@example.com"
@@ -143,7 +143,7 @@ export function SignupForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-gray-900 dark:text-gray-100">Phone (Optional)</Label>
+                        <Label htmlFor="phone" className="text-neo-black">Phone (Optional)</Label>
                         <Input
                             id="phone"
                             placeholder="+91 98765 43210"
@@ -155,7 +155,7 @@ export function SignupForm() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password" university-id="password" className="text-gray-900 dark:text-gray-100">Password</Label>
+                        <Label htmlFor="password" university-id="password" className="text-neo-black">Password</Label>
                         <div className="relative">
                             <Input
                                 id="password"
@@ -180,7 +180,7 @@ export function SignupForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="role" className="text-gray-900 dark:text-gray-100">I want to</Label>
+                    <Label htmlFor="role" className="text-neo-black">I want to</Label>
                     <Select
                         onValueChange={(value) => form.setValue("role", value as "citizen" | "verifier")}
                         defaultValue="citizen"

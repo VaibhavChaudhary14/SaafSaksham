@@ -39,13 +39,13 @@ export function TaskFeed() {
         };
     }, []);
 
-    if (loading) return <div className="p-8 text-center text-muted-foreground">Loading community updates...</div>;
+    if (loading) return <div className="p-8 text-center text-muted-foreground font-mono animate-pulse">LOADING FEED...</div>;
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Community Reports</h2>
-                <span className="text-sm text-muted-foreground">{tasks.length} active issues</span>
+            <div className="flex items-center justify-between border-b-2 border-black pb-4">
+                <h2 className="text-3xl font-black font-sirukota tracking-tighter uppercase">Community Reports</h2>
+                <span className="text-sm font-bold font-mono bg-neo-lemon border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">{tasks.length} ACTIVE ISSUES</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,15 +1,19 @@
 import type React from "react";
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google"; // Removed as requested/used in user snippet (user snippet commented out font usage but imported it. I will keep imports but follow user snippet style which actually didn't use them in body classname dynamically, but kept imports. Wait, user snippet `_geist` unused. I will keep it clean).
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Unbounded, Philosopher, Chakra_Petch } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/context/AuthContext";
 import { Navigation } from "@/components/nav";
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: '--font-geist' });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-geist-mono' });
+const unbounded = Unbounded({ subsets: ["latin"], variable: '--font-unbounded' });
+const philosopher = Philosopher({ weight: ['400', '700'], subsets: ["latin"], variable: '--font-philosopher' });
+const chakraPetch = Chakra_Petch({ weight: ['300', '400', '500', '600', '700'], subsets: ["latin"], variable: '--font-chakra-petch' });
 
 export const metadata: Metadata = {
   title: "SaafSaksham - Clean Your City, Earn Real Rewards",
@@ -42,13 +46,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
-        <AuthProvider>
-          <Navigation />
-          {children}
-          <Toaster position="top-right" richColors />
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`font-sans antialiased ${geist.variable} ${geistMono.variable} ${unbounded.variable} ${philosopher.variable} ${chakraPetch.variable}`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <Navigation />
+            {children}
+            <Toaster position="top-right" richColors />
+          </AuthProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

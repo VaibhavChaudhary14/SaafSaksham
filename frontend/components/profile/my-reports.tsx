@@ -22,8 +22,10 @@ export function MyReports() {
     }, []);
 
     return (
-        <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Recent Activity</h3>
+        <div className="space-y-6">
+            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2">
+                <h3 className="text-2xl font-black font-sirukota uppercase">Recent Activity</h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {tasks.map(task => (
                     <TaskCard key={task.id} task={task} />

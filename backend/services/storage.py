@@ -1,6 +1,6 @@
 import os
 from supabase import create_client, Client
-from backend.core.config import settings
+from core.config import settings
 from fastapi import UploadFile
 
 def get_supabase() -> Client:

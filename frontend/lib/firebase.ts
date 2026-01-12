@@ -14,9 +14,12 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
+import { getStorage } from 'firebase/storage'
+
 // Initialize Firebase only once
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 const auth = getAuth(app)
+const storage = getStorage(app)
 
 // Google OAuth Provider
 const googleProvider = new GoogleAuthProvider()
@@ -30,5 +33,5 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
     // connectAuthEmulator(auth, 'http://localhost:9099')
 }
 
-export { auth, googleProvider }
+export { auth, googleProvider, storage }
 export default app

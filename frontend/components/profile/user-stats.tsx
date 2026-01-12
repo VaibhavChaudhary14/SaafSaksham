@@ -1,29 +1,37 @@
 "use client";
 import { Award, Zap, Target } from 'lucide-react';
 
+import { ActivityChart } from './activity-chart';
+
 export function UserStats() {
     return (
-        <div className="grid grid-cols-3 gap-4">
-            <div className="bg-card border rounded-xl p-4 text-center">
-                <div className="bg-yellow-100 text-yellow-700 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Award className="w-5 h-5" />
+        <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-neo-white border-2 border-black shadow-neo p-6 text-center hover:shadow-hover transition-all">
+                    <div className="bg-neo-lemon border-2 border-black w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <Award className="w-6 h-6 text-neo-black" />
+                    </div>
+                    <div className="text-3xl font-black font-milestone">1,250</div>
+                    <div className="text-sm font-bold font-mono text-muted-foreground uppercase tracking-wider">Total XP</div>
                 </div>
-                <div className="text-2xl font-bold font-mono">1,250</div>
-                <div className="text-xs text-muted-foreground">Total XP</div>
+                <div className="bg-neo-white border-2 border-black shadow-neo p-6 text-center hover:shadow-hover transition-all">
+                    <div className="bg-neo-blue border-2 border-black w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <Zap className="w-6 h-6 text-neo-black" />
+                    </div>
+                    <div className="text-3xl font-black font-milestone">12</div>
+                    <div className="text-sm font-bold font-mono text-muted-foreground uppercase tracking-wider">Verified</div>
+                </div>
+                <div className="bg-neo-white border-2 border-black shadow-neo p-6 text-center hover:shadow-hover transition-all">
+                    <div className="bg-neo-mint border-2 border-black w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <Target className="w-6 h-6 text-neo-black" />
+                    </div>
+                    <div className="text-3xl font-black font-milestone">98%</div>
+                    <div className="text-sm font-bold font-mono text-muted-foreground uppercase tracking-wider">Accuracy</div>
+                </div>
             </div>
-            <div className="bg-card border rounded-xl p-4 text-center">
-                <div className="bg-blue-100 text-blue-700 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Zap className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold font-mono">12</div>
-                <div className="text-xs text-muted-foreground">Reports Verified</div>
-            </div>
-            <div className="bg-card border rounded-xl p-4 text-center">
-                <div className="bg-green-100 text-green-700 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Target className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold font-mono">98%</div>
-                <div className="text-xs text-muted-foreground">Accuracy Score</div>
+
+            <div className="h-[400px]">
+                <ActivityChart />
             </div>
         </div>
     );

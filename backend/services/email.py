@@ -1,6 +1,6 @@
 import os
 import resend
-from backend.core.config import settings
+from core.config import settings
 
 resend.api_key = os.getenv("RESEND_API_KEY")
 

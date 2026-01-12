@@ -71,7 +71,7 @@ export function LoginForm() {
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-900 dark:text-gray-100">Email Address</Label>
+                    <Label htmlFor="email" className="text-neo-black">Email Address</Label>
                     <Input
                         id="email"
                         placeholder="name@example.com"
@@ -80,7 +80,7 @@ export function LoginForm() {
                         autoComplete="email"
                         autoCorrect="off"
                         disabled={isLoading}
-                        className="h-11 bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-black focus:ring-black dark:focus:border-white dark:focus:ring-white transition-all shadow-sm"
+                        className="h-11 bg-neo-white border-2 border-black text-neo-black placeholder:text-muted-foreground focus:border-black focus:ring-0 transition-all shadow-sm"
                         {...form.register("email")}
                     />
                     {form.formState.errors.email && (
@@ -90,7 +90,7 @@ export function LoginForm() {
 
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="password" university-id="password" className="text-gray-900 dark:text-gray-100">Password</Label>
+                        <Label htmlFor="password" university-id="password" className="text-neo-black">Password</Label>
                         <Link
                             href="/auth/forgot-password"
                             className="text-xs font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"

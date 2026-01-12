@@ -44,6 +44,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Neobrutalist Variables */
+  --neo-white: #FAFAFA;
+  --neo-black: #18181B;
+  --neo-lemon: #FDE047;
+  --neo-mint: #A3E635;
+  --neo-pink: #F9A8D4;
+  --neo-blue: #67E8F9;
+  --neo-shadow-color: rgba(0, 0, 0, 1);
 }
 
 .dark {
@@ -86,11 +95,32 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  /* Neobrutalist Dark Mode Overrides */
+  --neo-white: #18181B;
+  --neo-black: #FAFAFA;
+  --neo-lemon: #854D0E;
+  --neo-mint: #3F6212;
+  --neo-pink: #831843;
+  --neo-blue: #155E75;
+  --neo-shadow-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Reset Selection */
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
+  --font-sans: "Geist", "Geist Fallback", sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
+
+  /* Custom Font Mappings (User Requested Aliases -> Google Font Alternatives) */
+  --font-sirukota: var(--font-unbounded);
+  --font-story: var(--font-philosopher);
+  --font-milestone: var(--font-chakra-petch);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -116,10 +146,24 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  /* Neobrutalist Palette Mapped to CSS Vars */
+  --color-neo-mint: var(--neo-mint);
+  --color-neo-lemon: var(--neo-lemon);
+  --color-neo-pink: var(--neo-pink);
+  --color-neo-blue: var(--neo-blue);
+  --color-neo-white: var(--neo-white);
+  --color-neo-black: var(--neo-black);
+
+  --shadow-neo: 4px 4px 0px 0px var(--neo-shadow-color);
+  --shadow-neo-hover: 2px 2px 0px 0px var(--neo-shadow-color);
+
+
+  /* ... existing vars ... */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* Sidebar (Keep existing if needed, or override) */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -130,10 +174,36 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+
+@layer utilities {
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+
+  .neo-border {
+    @apply border-2 border-black;
+  }
+
+  .neo-shadow {
+    box-shadow: var(--shadow-neo);
+  }
+
+  .neo-shadow-hover {
+    box-shadow: var(--shadow-neo-hover);
+  }
+
+  .neo-click {
+    @apply active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -1,5 +1,5 @@
 import google.generativeai as genai
-from backend.core.config import settings
+from core.config import settings
 import os
 
 # Configure Gemini

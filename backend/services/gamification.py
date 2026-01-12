@@ -1,4 +1,4 @@
-from backend.services.storage importget_supabase
+from services.storage import get_supabase
 from datetime import datetime
 
 async def award_xp(user_id: str, amount: int, reason: str, task_id: str = None):
